@@ -76,17 +76,17 @@ public class SpongeBob {
         if (!image.equals("X")) {
             finalCmd = isWindows
                     ? "ffmpeg.exe -loop 1 -i " + image +
-                      " -i .\\build\\output.mp3 -c:v libx264 -tune stillimage -c:a aac -b:a 192k -shortest output.mp4 -y"
+                      " -i .\\build\\output.mp3 -c:v libx264 -tune stillimage -c:a aac -b:a 192k -shortest .\\build\\output.mp4 -y"
                     : "./ffmpeg -loop 1 -i " + image +
-                      " -i ./build/output.mp3 -c:v libx264 -tune stillimage -c:a aac -b:a 192k -shortest output.mp4 -y";
+                      " -i ./build/output.mp3 -c:v libx264 -tune stillimage -c:a aac -b:a 192k -shortest ./build/output.mp4 -y";
         } else {
             finalCmd = isWindows
                     ? "ffmpeg.exe -stream_loop -1 -f lavfi -i color=c=black:s=854x480:r=30 " +
                       "-i .\\build\\output.mp3 -c:v libx264 -tune stillimage -c:a aac -b:a 192k " +
-                      "-pix_fmt yuv420p -shortest output.mp4 -y"
+                      "-pix_fmt yuv420p -shortest .\\build\\output.mp4 -y"
                     : "./ffmpeg -stream_loop -1 -f lavfi -i color=c=black:s=854x480:r=30 " +
                       "-i ./build/output.mp3 -c:v libx264 -tune stillimage -c:a aac -b:a 192k " +
-                      "-pix_fmt yuv420p -shortest output.mp4 -y";
+                      "-pix_fmt yuv420p -shortest ./build/output.mp4 -y";
         }
 
         execute(finalCmd);
