@@ -1,14 +1,11 @@
 package com.debbech.spongebob.gui;
 
-import com.debbech.spongebob.core.DiskManager;
-import com.debbech.spongebob.core.FFMPEGManager;
-import com.debbech.spongebob.input.InputSanitizer;
+import com.debbech.spongebob.core.Core;
 import com.debbech.spongebob.input.UserInput;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.nio.file.Path;
 
 public class Gui {
 
@@ -17,11 +14,9 @@ public class Gui {
     private JTextField inputmp3;
     private JTextField inputimg;
     private int msgCount = 1;
-    private Boolean start = false;
 
-    public void initGui(Boolean startFlow){
+    public void initGui(){
         SwingUtilities.invokeLater(() -> new Gui().createAndShowGUI());
-        start = startFlow;
     }
 
     public void updateStatus(String text, StatusType st, boolean restarted){
@@ -67,8 +62,8 @@ public class Gui {
     }
 
     private void generateMp4(ActionEvent e) {
-        start = true;
-        userInput = new UserInput(inputmp3.getText(), inputimg.getText());
-
+        userInput = new UserInput(inputmp3.getText().trim(), inputimg.getText().trim());
+        String[] pars = {userInput.getImage(), userInput.getMp3Path()};
+        Core.run(pars);
     }
 }
