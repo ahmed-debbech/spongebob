@@ -14,6 +14,7 @@ public class Gui {
     private JTextField inputmp3;
     private JTextField inputimg;
     private int msgCount = 1;
+    private JButton button;
 
     public void initGui(){
         SwingUtilities.invokeLater(() -> new Gui().createAndShowGUI());
@@ -24,10 +25,10 @@ public class Gui {
 
         Color ct = null;
         switch (st){
-            case ERR : ct = Color.RED;
-            case NORM : ct = Color.BLACK;
-            case SUCC : ct = Color.GREEN;
-            case WARN: ct = Color.YELLOW;
+            case ERR : ct = Color.RED; break;
+            case NORM : ct = Color.BLACK; break;
+            case SUCC : ct = Color.GREEN; break;
+            case WARN: ct = Color.YELLOW; break;
         }
         status.setForeground(ct);
         status.setText(msgCount + " -> " + text);
@@ -43,7 +44,7 @@ public class Gui {
         inputimg = new JTextField(15);
         JLabel mp3s = new JLabel("Set Mp3s Path");
         inputmp3 = new JTextField(15);
-        JButton button = new JButton("Generate mp4");
+        button = new JButton("Generate mp4");
         status = new JLabel("--", SwingConstants.CENTER);
 
         button.addActionListener((e) -> generateMp4(e));
@@ -62,8 +63,12 @@ public class Gui {
     }
 
     private void generateMp4(ActionEvent e) {
+        button.setEnabled(false);
         userInput = new UserInput(inputmp3.getText().trim(), inputimg.getText().trim());
         String[] pars = {userInput.getImage(), userInput.getMp3Path()};
-        Core.run(pars);
+        new Thread(() -> {
+            Core.run(pars, this);
+            button.setEnabled(true);
+        }).start();
     }
 }
