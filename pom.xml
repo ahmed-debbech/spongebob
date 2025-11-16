@@ -4,7 +4,7 @@
                              https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ahmeddebbech.sponge</groupId>
+    <groupId>com.debbech.spongebob</groupId>
     <artifactId>spongebob</artifactId>
     <version>0.1</version>
     <name>Sponge</name>
@@ -35,7 +35,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.ahmeddebbech.sponge.Sponge</mainClass>
+                            <mainClass>com.debbech.spongebob.SpongeBob</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
