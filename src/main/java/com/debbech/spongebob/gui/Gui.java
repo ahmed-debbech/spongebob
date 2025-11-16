@@ -2,6 +2,7 @@ package com.debbech.spongebob.gui;
 
 import com.debbech.spongebob.core.Core;
 import com.debbech.spongebob.input.UserInput;
+import com.debbech.spongebob.youtube.YoutubeCore;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +16,7 @@ public class Gui {
     private JTextField inputimg;
     private int msgCount = 1;
     private JButton button;
+    private JButton upload;
 
     public void initGui(){
         SwingUtilities.invokeLater(() -> new Gui().createAndShowGUI());
@@ -45,9 +47,11 @@ public class Gui {
         JLabel mp3s = new JLabel("Set Mp3s Path");
         inputmp3 = new JTextField(15);
         button = new JButton("Generate mp4");
+        upload = new JButton("Upload to YT");
         status = new JLabel("--", SwingConstants.CENTER);
 
         button.addActionListener((e) -> generateMp4(e));
+        upload.addActionListener((e) -> uploadToYt(e));
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -56,6 +60,7 @@ public class Gui {
         panel.add(mp3s);
         panel.add(inputmp3);
         panel.add(button);
+        panel.add(upload);
         panel.add(status);
 
         frame.add(panel, BorderLayout.CENTER);
@@ -70,5 +75,9 @@ public class Gui {
             Core.run(pars, this);
             button.setEnabled(true);
         }).start();
+    }
+    private void uploadToYt(ActionEvent e){
+        YoutubeCore yc = new YoutubeCore();
+        yc.upload();
     }
 }
