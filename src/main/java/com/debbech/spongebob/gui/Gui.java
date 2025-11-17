@@ -77,7 +77,10 @@ public class Gui {
         }).start();
     }
     private void uploadToYt(ActionEvent e){
-        YoutubeCore yc = new YoutubeCore();
-        yc.upload();
+        try {
+            YoutubeCore.getInstance().upload();
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
     }
 }
