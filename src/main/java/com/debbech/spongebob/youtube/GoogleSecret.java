@@ -5,5 +5,6 @@ public class GoogleSecret {
 
     public static class Installed {
         public String client_id;
+        public String client_secret;
     }
 }
