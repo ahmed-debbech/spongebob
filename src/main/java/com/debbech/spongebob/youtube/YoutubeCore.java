@@ -11,12 +11,14 @@ public class YoutubeCore {
 
     private static YoutubeCore instance = null;
     private TokenResp userTokens = null;
+    private static boolean authDone = false;
 
     private YoutubeCore(){}
 
     public static YoutubeCore getInstance(){
         if(instance == null){
             instance = new YoutubeCore();
+            authDone = false;
         }
         return instance;
     }
@@ -31,6 +33,10 @@ public class YoutubeCore {
             LocalServer.start();
             System.out.println("calling this url -> " + callbackurl);
             new Browser().launchBrowser(callbackurl);
+            while(!authDone){}
+            System.out.println("Auth is done successfully with youtube, proceeding with uploading the video...");
+
+
         }catch(Exception e){
             throw e;
         }

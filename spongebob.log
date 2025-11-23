@@ -224,3 +224,38 @@ Desktop browsing is not supported on this system. trying different method...
 received from code after google callback
 got 'code' from google's response
 done calling get tokens
+Launched Spongebob on 2025-11-23T12:28:48.700484711
+uploading to yt...
+http server created for callback.
+calling this url -> https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/youtube.upload&response_type=code&redirect_uri=http%3A//127.0.0.1%3A9004&client_id=454274022734-pq4m07rn6gf5dphsoq1dsif64sibrskd.apps.googleusercontent.com
+http server started to listen to google's callback on port 9004
+Desktop browsing is not supported on this system. trying different method...
+received from code after google callback
+got 'code' from google's response
+done calling get tokens
+received from code after google callback
+could not parse google's callback correctly
+received from code after google callback
+got 'code' from google's response
+Failed with 400 error code in http request to get tokens from google
+done calling get tokens
+received from code after google callback
+could not parse google's callback correctly
+received from code after google callback
+got 'code' from google's response
+Failed with 400 error code in http request to get tokens from google
+done calling get tokens
+received from code after google callback
+could not parse google's callback correctly
+received from code after google callback
+got 'code' from google's response
+Failed with 400 error code in http request to get tokens from google
+done calling get tokens
+received from code after google callback
+could not parse google's callback correctly
+received from code after google callback
+got 'code' from google's response
+Failed with 400 error code in http request to get tokens from google
+done calling get tokens
+received from code after google callback
+could not parse google's callback correctly

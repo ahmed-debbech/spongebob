@@ -38,7 +38,7 @@ public class Gui {
     }
 
     public void createAndShowGUI(){
-        JFrame frame = new JFrame("Simple GUI");
+        JFrame frame = new JFrame("Sponge bob");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 500);
 

@@ -65,12 +65,33 @@ public class LocalServer {
                 TokenResp tr = getTokens(code);
                 System.out.println("done calling get tokens");
                 YoutubeCore.getInstance().setUserTokens(tr);
-                //todo retunrn htmlpage of done
-
+                respond200(t);
             }catch(UnsupportedEncodingException uee){
                 System.err.println("could not parse google's callback correctly");
             }catch (Exception e){
                 System.err.println("FAILED processing google's callback: " + e.getMessage());
+            }
+        }
+        private void respond200(HttpExchange t){
+            String response = "<html>\n" +
+                    "\n" +
+                    "<head>\n" +
+                    "    <title>Spongebob</title>\n" +
+                    "</head>\n" +
+                    "\n" +
+                    "<body>\n" +
+                    "    <h2>You may now close this window!</h2>\n"  +
+                    "</body>\n" +
+                    "\n" +
+                    "</html>";
+
+            try {
+                t.sendResponseHeaders(200, response.length());
+                OutputStream os = t.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+            }catch(Exception e){
+                System.err.println("could not send 'you may close this window message back to clients browser.'");
             }
         }
         private String getParams(HttpExchange exchange, String key) throws UnsupportedEncodingException {
