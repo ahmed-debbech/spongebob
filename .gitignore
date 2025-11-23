@@ -3,3 +3,4 @@ build
 .idea
 target
 google.json
+*.log
