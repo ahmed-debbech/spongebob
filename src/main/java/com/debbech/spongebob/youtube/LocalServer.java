@@ -11,10 +11,8 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class LocalServer {
@@ -58,6 +56,7 @@ public class LocalServer {
     static class RootHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
+            if(!t.getRequestURI().toString().startsWith("/?code")) return;
             System.out.println("received from code after google callback");
             try {
                 String code = getParams(t,"code");
@@ -66,8 +65,9 @@ public class LocalServer {
                 System.out.println("done calling get tokens");
                 YoutubeCore.getInstance().setUserTokens(tr);
                 respond200(t);
+                YoutubeCore.setAuthDone();
             }catch(UnsupportedEncodingException uee){
-                System.err.println("could not parse google's callback correctly");
+                System.err.println("could not parse google's callback correctly because : " + uee.getMessage());
             }catch (Exception e){
                 System.err.println("FAILED processing google's callback: " + e.getMessage());
             }
@@ -98,7 +98,7 @@ public class LocalServer {
             URI requestUri = exchange.getRequestURI();
             String query = requestUri.getQuery();
             Map<String, String> queryParams = new HashMap<>();
-            if (query == null) throw new UnsupportedEncodingException();
+            if (query == null) throw new UnsupportedEncodingException("could not get query from url after google called our api with it");
 
             String[] pairs = query.split("&");
             for (String pair : pairs) {

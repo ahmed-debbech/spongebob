@@ -1,10 +1,7 @@
 package com.debbech.spongebob.youtube;
 
 import com.debbech.spongebob.Config;
-import com.google.gson.Gson;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URL;
 
 public class YoutubeCore {
@@ -30,16 +27,36 @@ public class YoutubeCore {
         String callbackurl = "https://accounts.google.com/o/oauth2/v2/auth?scope=" +(new URL("https://www.googleapis.com/auth/youtube.upload")) +"&response_type=code&redirect_uri=http%3A//127.0.0.1%3A"+Config.getInstance().PORT+"&client_id="+
                 Config.getInstance().getGoogleSecret().installed.client_id;
         try{
-            LocalServer.start();
-            System.out.println("calling this url -> " + callbackurl);
-            new Browser().launchBrowser(callbackurl);
-            while(!authDone){}
-            System.out.println("Auth is done successfully with youtube, proceeding with uploading the video...");
-
-
+            //doAuth(callbackurl);
+            UploadApi ua = new UploadApi();
+            YoutubeVideo yv = new YoutubeVideo("", 10000);
+            ua.doUpload(yv, userTokens.access_token);
         }catch(Exception e){
             throw e;
         }
+    }
+
+    private void doAuth(String callbackurl) throws Exception{
+        setAuthNotDone();
+        try {
+            LocalServer.start();
+            System.out.println("calling this url -> " + callbackurl);
+            new Browser().launchBrowser(callbackurl);
+            while(!authDone){
+                Thread.sleep(1000);
+            }
+            System.err.println(userTokens.access_token);
+            System.out.println("Auth is done successfully with youtube, proceeding with uploading the video...");
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+    }
+    public synchronized static void setAuthNotDone(){
+        authDone = false;
+    }
+
+    public synchronized static void setAuthDone(){
+        authDone = true;
     }
 
     public void setUserTokens(TokenResp tr){
