@@ -2,6 +2,7 @@ package com.debbech.spongebob.youtube;
 
 import com.debbech.spongebob.Config;
 
+import java.io.File;
 import java.net.URL;
 
 public class YoutubeCore {
@@ -27,9 +28,9 @@ public class YoutubeCore {
         String callbackurl = "https://accounts.google.com/o/oauth2/v2/auth?scope=" +(new URL("https://www.googleapis.com/auth/youtube.upload")) +"&response_type=code&redirect_uri=http%3A//127.0.0.1%3A"+Config.getInstance().PORT+"&client_id="+
                 Config.getInstance().getGoogleSecret().installed.client_id;
         try{
-            //doAuth(callbackurl);
+            doAuth(callbackurl);
             UploadApi ua = new UploadApi();
-            YoutubeVideo yv = new YoutubeVideo("", 10000);
+            YoutubeVideo yv = new YoutubeVideo("/home/ahmed/pngs/8.mp4", new File("/home/ahmed/pngs/8.mp4").length() );
             ua.doUpload(yv, userTokens.access_token);
         }catch(Exception e){
             throw e;
@@ -45,7 +46,6 @@ public class YoutubeCore {
             while(!authDone){
                 Thread.sleep(1000);
             }
-            System.err.println(userTokens.access_token);
             System.out.println("Auth is done successfully with youtube, proceeding with uploading the video...");
         } catch (Exception e) {
             throw new Exception(e);
