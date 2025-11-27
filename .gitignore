@@ -4,3 +4,4 @@ build
 target
 google.json
 *.log
+upload_mock
