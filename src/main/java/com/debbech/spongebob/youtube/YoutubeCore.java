@@ -28,7 +28,12 @@ public class YoutubeCore {
         String callbackurl = "https://accounts.google.com/o/oauth2/v2/auth?scope=" +(new URL("https://www.googleapis.com/auth/youtube.upload")) +"&response_type=code&redirect_uri=http%3A//127.0.0.1%3A"+Config.getInstance().PORT+"&client_id="+
                 Config.getInstance().getGoogleSecret().installed.client_id;
         try{
-            doAuth(callbackurl);
+            if(!Config.getInstance().bypassGoogleAuth) {
+                doAuth(callbackurl);
+            }else {
+                this.userTokens = new TokenResp();
+                this.userTokens.access_token = "e";
+            }
             UploadApi ua = new UploadApi();
             YoutubeVideo yv = new YoutubeVideo("/home/ahmed/pngs/8.mp4", new File("/home/ahmed/pngs/8.mp4").length() );
             ua.doUpload(yv, userTokens.access_token);

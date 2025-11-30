@@ -5,3 +5,4 @@ target
 google.json
 *.log
 upload_mock
+filefrom*

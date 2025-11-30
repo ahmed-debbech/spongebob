@@ -3,8 +3,10 @@ package com.debbech.spongebob.youtube;
 
 import okhttp3.*;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.time.LocalDateTime;
 
 public class UploadApi {
@@ -19,18 +21,15 @@ public class UploadApi {
         this.user_access_token = accessToken;
         try {
             this.locationUpload = startResumableSession();
-            //for testing only the new thread
-            new Thread(()-> {
-                while(true) {
-                    try {
-                        checkStatus();
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
+            long lastByte = 0;
+            while(true) {
+                if(uploadVideo(lastByte) == false){
+                    lastByte = checkStatus();
+                    lastByte = lastByte+1;
+                }else{
+                    break;
                 }
-            }).start();
-            uploadVideo();
+            }
         }catch (Exception e){
             throw e;
         }
@@ -60,7 +59,8 @@ public class UploadApi {
         RequestBody body = RequestBody.create(JSON, bodyj);
 
         Request request = new Request.Builder()
-                .url("https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status,contentDetails")
+                //.url("https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status,contentDetails")
+                .url("http://localhost:4000/videos?uploadType=resumable&part=snippet,status,contentDetails")
                 .post(body)
                 .header("Authorization", "Bearer " + this.user_access_token)
                 .header("Content-Type", "application/json; charset=UTF-8")
@@ -91,37 +91,67 @@ public class UploadApi {
         }
     }
 
-    private void uploadVideo() throws Exception{
-        File sourceFile =new File(this.video.getPathOnDisk());
+    private boolean uploadVideo(long start_byte) throws Exception{
+
+        File requestBodyFile;
+        if(start_byte == 0){
+            requestBodyFile = new File(this.video.getPathOnDisk());
+        }else{
+            RandomAccessFile sourceFile =new RandomAccessFile(this.video.getPathOnDisk(), "r");
+            sourceFile.seek(start_byte + 1);   // jump to this byte
+
+            byte[] buffer = new byte[4096];
+            RandomAccessFile raf = new RandomAccessFile("filefrom"+start_byte, "rw");
+            while ((sourceFile.read(buffer)) != -1) {
+                raf.write(buffer);
+            }
+            raf.close();
+            sourceFile.close();
+            requestBodyFile = new File("filefrom"+start_byte);
+            System.err.println(requestBodyFile.length());
+        }
 
         RequestBody requestBody = RequestBody.create(
                 MediaType.parse("video/mp4"),
-                sourceFile
+                requestBodyFile
         );
 
-        Request request = new Request.Builder()
-                .url(this.locationUpload)
-                .put(requestBody)
-                .header("Authorization", "Bearer " + this.user_access_token)
-                .header("Content-Type", "video/*")
-                .header("Content-Length", String.valueOf(this.video.getSizeInBytes()))
-                .build();
+        Request request;
+        if(start_byte != 0){
+            System.out.println("Resuming upload after byte " + (start_byte -1));
+            request = new Request.Builder()
+                    .url(this.locationUpload)
+                    .put(requestBody)
+                    .header("Authorization", "Bearer " + this.user_access_token)
+                    .header("Content-Type", "video/*")
+                    .header("Content-Length", String.valueOf(this.video.getSizeInBytes()-(start_byte+1)))
+                    .header("Content-Range", "bytes "+ start_byte+"-"+(this.video.getSizeInBytes()-1)+"/"+(this.video.getSizeInBytes()))
+                    .build();
+        }else{
+            request = new Request.Builder()
+                    .url(this.locationUpload)
+                    .put(requestBody)
+                    .header("Authorization", "Bearer " + this.user_access_token)
+                    .header("Content-Type", "video/*")
+                    .header("Content-Length", String.valueOf(this.video.getSizeInBytes()))
+                    .build();
+        }
 
         OkHttpClient client = new OkHttpClient();
         try {
             Response response = client.newCall(request).execute();
             if(response.code() < 299) {
                 System.out.println("Upload finished with " + response.code() + " code!");
+                return true;
             }else{
-                if((response.code() <= 500) && (response.code() <= 504)){
+                if((response.code() >= 500) && (response.code() <= 504)){
                     System.out.println("The upload has been interrupted and stoped.. retrying in few moments.");
-                    long lastByte = checkStatus();
-                    //todo we repeat that
                 }else {
                     System.err.println("Upload failed permanently with " + response.code() + " code!");
                     System.err.println(response.body().string());
                 }
             }
+            return false;
         } catch (Exception e) {
             System.err.println("could not upload the video to youtube, connection interrupted");
             throw new Exception("could not upload the video to youtube, connection interrupted : "+ e.getMessage());

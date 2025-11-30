@@ -7,6 +7,7 @@ public class Config {
     private static Config config = null;
     public int PORT = 9004;
     public int timeToStopCallbackServer = 600; // 10 min
+    public boolean bypassGoogleAuth = true;
 
     private GoogleSecret googleSecret;
 
