@@ -1,0 +1,20 @@
+services:
+  main:
+    build: ./main
+    image: main:latest
+    container_name: main
+    networks:
+      - spongebob-net
+
+  uploader:
+    build: ./uploader
+    image: uploader:latest
+    container_name: uploader
+    networks:
+      - spongebob-net
+    depends_on:
+      - main
+
+networks:
+  spongebob-net:
+    driver: bridge

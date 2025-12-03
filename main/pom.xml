@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.debbech.spongebob</groupId>
-    <artifactId>spongebob</artifactId>
+    <artifactId>main</artifactId>
     <version>0.1</version>
-    <name>Sponge</name>
+    <name>main</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

@@ -2,7 +2,6 @@ package com.debbech.spongebob;
 
 import com.debbech.spongebob.gui.Gui;
 import com.debbech.spongebob.youtube.GoogleSecret;
-import com.debbech.spongebob.youtube.YoutubeCore;
 import com.google.gson.Gson;
 
 import java.io.*;
@@ -33,8 +32,9 @@ public class SpongeBob {
             System.err.println(("could not load google secret store : " + e.getMessage()));
         }
 
-        Gui gui = new Gui();
-        gui.initGui();
+        while(true);
+        //Gui gui = new Gui();
+        //gui.initGui();
 
     }
 
