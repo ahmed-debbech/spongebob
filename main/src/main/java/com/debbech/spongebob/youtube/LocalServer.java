@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -17,6 +19,8 @@ import java.util.concurrent.Executors;
 
 public class LocalServer {
 
+    private static Logger log = LoggerFactory.getLogger(LocalServer.class);
+
     private static HttpServer httpServer = null;
     private static boolean isRunning = false;
     private final static Object lock = new Object();
@@ -28,7 +32,7 @@ public class LocalServer {
             if(httpServer == null) {
                 try {
                     httpServer = HttpServer.create(new InetSocketAddress("127.0.0.1", Config.getInstance().PORT), 0);
-                    System.out.println("http server created for callback.");
+                    log.info("http server created for callback.");
                 } catch (IOException e) {
                     throw new Exception("can not start http server to listen to google's callback: " + e.getMessage());
                 }
@@ -39,37 +43,37 @@ public class LocalServer {
                 synchronized (lock) {
                     isRunning = true;
                     httpServer.start();
-                    System.out.println("http server started to listen to google's callback on port " + Config.getInstance().PORT);
+                    log.info("http server started to listen to google's callback on port " + Config.getInstance().PORT);
                     try {
                         Thread.sleep(Config.getInstance().timeToStopCallbackServer * 1000);
                     } catch (InterruptedException e) {
                     }
                     httpServer.stop(1);
                     isRunning = false;
-                    System.out.println("http server has stoped automatically after " + Config.getInstance().timeToStopCallbackServer + " seconds");
+                    log.info("http server has stoped automatically after " + Config.getInstance().timeToStopCallbackServer + " seconds");
                 }
             }).start();
         }else{
-            System.out.println("server already started");
+            log.error("server already started");
         }
     }
     static class RootHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
             if(!t.getRequestURI().toString().startsWith("/?code")) return;
-            System.out.println("received from code after google callback");
+            log.info("received from code after google callback");
             try {
                 String code = getParams(t,"code");
-                System.out.println("got 'code' from google's response");
+                log.info("got 'code' from google's response");
                 TokenResp tr = getTokens(code);
-                System.out.println("done calling get tokens");
+                log.info("done calling get tokens");
                 YoutubeCore.getInstance().setUserTokens(tr);
                 respond200(t);
                 YoutubeCore.setAuthDone();
             }catch(UnsupportedEncodingException uee){
-                System.err.println("could not parse google's callback correctly because : " + uee.getMessage());
+                log.error("could not parse google's callback correctly because : " + uee.getMessage());
             }catch (Exception e){
-                System.err.println("FAILED processing google's callback: " + e.getMessage());
+                log.error("FAILED processing google's callback: " + e.getMessage());
             }
         }
         private void respond200(HttpExchange t){
@@ -91,7 +95,7 @@ public class LocalServer {
                 os.write(response.getBytes());
                 os.close();
             }catch(Exception e){
-                System.err.println("could not send 'you may close this window message back to clients browser.'");
+                log.error("could not send 'you may close this window message back to clients browser.'");
             }
         }
         private String getParams(HttpExchange exchange, String key) throws UnsupportedEncodingException {
@@ -135,7 +139,7 @@ public class LocalServer {
             Reader streamReader;
             if (status > 299) {
                 streamReader = new InputStreamReader(con.getErrorStream());
-                System.err.println("Failed with " + status + " error code in http request to get tokens from google");
+                log.error("Failed with " + status + " error code in http request to get tokens from google");
             } else {
                 streamReader = new InputStreamReader(con.getInputStream());
             }

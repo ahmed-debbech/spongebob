@@ -1,5 +1,8 @@
 package com.debbech.spongebob.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,6 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class DiskManager {
+
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public boolean getMp3s(Path aggFilePath, String mp3Path) throws Exception{
         boolean atLeastOne = false;
@@ -54,7 +59,7 @@ public class DiskManager {
                     try {
                         Files.delete(p);
                     } catch (IOException e) {
-                        System.err.println("Failed to delete: " + p + " " + e.getMessage());
+                        log.error("Failed to delete: " + p + " " + e.getMessage());
                     }
                 });
     }

@@ -1,17 +1,23 @@
 package com.debbech.spongebob.youtube;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.*;
 import java.net.URI;
 
 public class Browser {
+
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     public void launchBrowser(String url) throws Exception{
         try {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 URI uri = new URI(url);
                 Desktop.getDesktop().browse(uri);
-                System.out.println("Opened " + url + " in the default browser.");
+                log.info("Opened " + url + " in the default browser.");
             } else {
-                System.out.println("Desktop browsing is not supported on this system. trying different method...");
+                log.info("Desktop browsing is not supported on this system. trying different method...");
                 boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
                 if(isWindows){
                     execute("start \"\" \""+url+"\"");
@@ -20,7 +26,7 @@ public class Browser {
                 }
             }
         } catch (Exception e) {
-            System.err.println("failed to load default broswer because : " + e.getMessage());
+            log.error("failed to load default broswer because : " + e.getMessage());
             throw new Exception("could not load browser because: " + e.getMessage());
         }
     }

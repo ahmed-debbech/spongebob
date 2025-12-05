@@ -2,6 +2,8 @@ package com.debbech.spongebob.youtube;
 
 
 import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.EOFException;
 import java.io.File;
@@ -11,12 +13,14 @@ import java.time.LocalDateTime;
 
 public class UploadApi {
 
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     private YoutubeVideo video;
     private String user_access_token;
     private  String locationUpload = null;
 
     public void doUpload(YoutubeVideo yv, String accessToken) throws Exception{
-        System.out.println("starting effective upload at "+  LocalDateTime.now());
+        log.info("starting effective upload at "+  LocalDateTime.now());
         this.video = yv;
         this.user_access_token = accessToken;
         try {
@@ -71,22 +75,22 @@ public class UploadApi {
 
         try (Response response = client.newCall(request).execute()) {
             if(response.code() < 299) {
-                System.out.println(response.code() + " OK from starting resumable upload session");
-                System.err.println(response.body().string());
+                log.info(response.code() + " OK from starting resumable upload session");
+                log.error(response.body().string());
                 String location = response.header("Location");
                 if (location == null) {
-                    System.err.println("Location URL that will be used for next api calls is not found");
+                    log.error("Location URL that will be used for next api calls is not found");
                     throw new Exception("Location URL that will be used for next api calls is not found");
                 }
-                System.out.println("Location: " + location);
+                log.info("Location: " + location);
                 return location;
             }else{
-                System.out.println("received "  + response.code() + " from google when starting upload session");
-                System.err.println(response.body().string());
+                log.info("received "  + response.code() + " from google when starting upload session");
+                log.error(response.body().string());
                 throw new Exception("could not start resumable session to upload the video because received " + response.code()+ " " + response.body().string());
             }
         } catch (IOException e) {
-            System.err.println("could not start resumable session to upload the video");
+            log.error("could not start resumable session to upload the video");
             throw new Exception("could not start resumable session to upload the video: " + e.getMessage());
         }
     }

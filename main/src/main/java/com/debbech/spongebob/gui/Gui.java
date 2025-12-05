@@ -72,7 +72,6 @@ public class Gui {
         userInput = new UserInput(inputmp3.getText().trim(), inputimg.getText().trim());
         String[] pars = {userInput.getImage(), userInput.getMp3Path()};
         new Thread(() -> {
-            Core.run(pars, this);
             button.setEnabled(true);
         }).start();
     }

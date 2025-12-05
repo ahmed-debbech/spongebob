@@ -1,19 +1,30 @@
 services:
   main:
     build: ./main
-    image: main:latest
+    image: spongebob_main:latest
     container_name: main
     networks:
       - spongebob-net
+    depends_on:
+      - rabbitmq
 
   uploader:
     build: ./uploader
-    image: uploader:latest
+    image: spongebob_uploader:latest
     container_name: uploader
     networks:
       - spongebob-net
     depends_on:
+      - rabbitmq
       - main
+  
+  rabbitmq:
+    image: rabbitmq:4.1.6-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - spongebob-net
 
 networks:
   spongebob-net:
