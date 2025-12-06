@@ -1,5 +1,6 @@
 package com.debbech.spongebob;
 
+import com.debbech.spongebob.control.Controller;
 import com.debbech.spongebob.youtube.GoogleSecret;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -15,27 +16,9 @@ public class SpongeBob {
 
     public static void main(String[] args) {
 
-        /*try {
-            PrintStream fileOut = null;
-            FileOutputStream fos = new FileOutputStream(new File("spongebob.log"), true);
-            fileOut = new PrintStream(fos);
-            System.setOut(fileOut);
-            System.setErr(fileOut);
-            System.out.println("Launched Spongebob on "+ LocalDateTime.now());
-        } catch (FileNotFoundException e) {
-            System.err.println("could not setup logging file");
-        }*/
-
         log.info("Spongebob main started up & running...");
 
-        String filePath = "google.json";
-        try (FileReader reader = new FileReader(filePath)) {
-            Gson gson = new Gson();
-            GoogleSecret gs = gson.fromJson(reader, GoogleSecret.class);
-            Config.getInstance().setGoogleSecret(gs);
-        } catch (Exception e) {
-            log.error(("could not load google secret store : " + e.getMessage()));
-        }
+        Config.getInstance().setGoogleConfig();
 
         new Thread(() -> {
             while(true) {
@@ -48,6 +31,8 @@ public class SpongeBob {
             }
         }).start();
 
+        Controller controller = new Controller();
+        controller.listenForEvents();
     }
 
 }

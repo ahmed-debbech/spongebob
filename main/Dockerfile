@@ -3,12 +3,12 @@ FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-COPY google.json .
-COPY ffmpeg .
 RUN mvn clean package -DskipTests
 
 # Stage 2: Run the JAR
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+COPY google.json .
+COPY ffmpeg .
+COPY --from=build /app/target/*-with-dependencies.jar app.jar
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

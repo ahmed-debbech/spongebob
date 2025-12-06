@@ -1,7 +1,5 @@
 package com.debbech.spongebob.core;
 
-import com.debbech.spongebob.gui.Gui;
-import com.debbech.spongebob.gui.StatusType;
 import com.debbech.spongebob.input.InputSanitizer;
 import com.debbech.spongebob.input.UserInput;
 import org.slf4j.Logger;
