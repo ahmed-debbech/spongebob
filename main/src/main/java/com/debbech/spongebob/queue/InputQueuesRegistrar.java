@@ -29,10 +29,10 @@ public class InputQueuesRegistrar {
         return instance;
     }
     public void registerAll() throws RuntimeException{
-        register_DIRECTORY_READY_TO_PROCESS();
+        register_in_proc_qu();
     }
 
-    private void register_DIRECTORY_READY_TO_PROCESS() throws RuntimeException{
+    private void register_in_proc_qu() throws RuntimeException{
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(Config.getInstance().rabbitMqHost);
         Connection connection = null;
@@ -46,7 +46,7 @@ public class InputQueuesRegistrar {
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), "UTF-8");
                 log.info("Received '" + message + "' from queue " + Config.getInstance().in_proc_qu);
-                this.inputQueuesHandler.handle_DIRECTORY_READY_TO_PROCESS(message);
+                this.inputQueuesHandler.handle_in_proc_qu(message);
             };
             channel.basicConsume(Config.getInstance().in_proc_qu, true, deliverCallback, consumerTag -> { });
             log.info("{} queue is now ready and listening for events", Config.getInstance().in_proc_qu);
