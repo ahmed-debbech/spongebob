@@ -1,7 +1,7 @@
 package com.debbech.spongebob.core;
 
-import com.debbech.spongebob.input.InputSanitizer;
-import com.debbech.spongebob.input.UserInput;
+import com.debbech.spongebob.core.input.InputSanitizer;
+import com.debbech.spongebob.core.input.UserInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,9 +9,9 @@ import java.nio.file.Path;
 
 public class Core {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static Logger log = LoggerFactory.getLogger(Core.class);
 
-    public static void run(String[] args){
+    public static void run(String[] args) throws Exception{
         UserInput userInput = null;
         try {
             userInput = new InputSanitizer().sanitize(args);
@@ -22,8 +22,10 @@ public class Core {
             FFMPEGManager fm = new FFMPEGManager();
             fm.generateConcatinatedMp3();
             fm.generateMp4Video(userInput.getImage());
+            new DiskManager().moveMp4();
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            log.error(e.getMessage());
+            throw new Exception(e);
         }
     }
 }

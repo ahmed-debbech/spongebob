@@ -1,5 +1,6 @@
 package com.debbech.spongebob.core;
 
+import com.debbech.spongebob.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,8 +40,15 @@ public class DiskManager {
 
     }
 
+    public void moveMp4(){
+        try {
+            Files.move(Paths.get("./build/output.mp4"), Paths.get(Config.getInstance().container_output_path).resolve("output.mp4"), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("could not move mp4 file: ", e);
+        }
+    }
     public Path createBuildDir() throws Exception {
-        Path buildDir = Paths.get("build");
+        Path buildDir = Paths.get("./build");
         try {
             if (Files.exists(buildDir)) {
                 deleteDirectory(buildDir);

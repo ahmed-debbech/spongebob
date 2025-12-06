@@ -1,4 +1,4 @@
-package com.debbech.spongebob.input;
+package com.debbech.spongebob.core.input;
 
 public class UserInput {
     private String mp3Path;

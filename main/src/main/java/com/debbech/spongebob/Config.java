@@ -10,12 +10,14 @@ import java.io.FileReader;
 public class Config {
 
     public String in_proc_qu = "DIRECTORY_READY_TO_PROCESS";
+    public String out_ulp_yt = "UPLOAD_TO_YOUTUBE";
     public int PORT = 9004;
     public int timeToStopCallbackServer = 600; // 10 min
     public boolean bypassGoogleAuth = true;
     public String rabbitMqHost = "rabbitmq";
     public String googleSecretFile = "google.json";
-
+    public String container_mp3_path = "/app/mp3";
+    public String container_output_path = "/app/output";
 
     private static Config config = null;
     private static Logger log = LoggerFactory.getLogger(SpongeBob.class);

@@ -43,18 +43,21 @@ public class InputQueuesRegistrar {
             channel = connection.createChannel();
             channel.queueDeclare(Config.getInstance().in_proc_qu, true, false, false, null);
 
+            Channel finalChannel = channel;
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), "UTF-8");
                 log.info("Received '" + message + "' from queue " + Config.getInstance().in_proc_qu);
-                this.inputQueuesHandler.handle_in_proc_qu(message);
+                if(this.inputQueuesHandler.handle_in_proc_qu(message)) {
+                    finalChannel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+                }
             };
-            channel.basicConsume(Config.getInstance().in_proc_qu, true, deliverCallback, consumerTag -> { });
+            channel.basicConsume(Config.getInstance().in_proc_qu, false, deliverCallback, consumerTag -> { });
             log.info("{} queue is now ready and listening for events", Config.getInstance().in_proc_qu);
 
         } catch (IOException e) {
-            throw new RuntimeException("Error occured while registering queue " + Config.getInstance().in_proc_qu + ": " + e);
+            throw new RuntimeException("Error occured while registering input queue " + Config.getInstance().in_proc_qu + ": " + e);
         } catch (TimeoutException e) {
-            throw new RuntimeException("Error occured while registering queue " + Config.getInstance().in_proc_qu + ": " + e);
+            throw new RuntimeException("Error occured while registering input queue " + Config.getInstance().in_proc_qu + ": " + e);
         }
     }
 }

@@ -17,6 +17,9 @@ services:
     build: ./main
     image: spongebob_main:latest
     container_name: main
+    volumes:
+      - ./mp3:/app/mp3 #modify Config.java with path in container
+      - ./output:/app/output #modify Config.java with path in container
     networks:
       - spongebob-net
     depends_on:
@@ -37,3 +40,4 @@ services:
 networks:
   spongebob-net:
     driver: bridge
+

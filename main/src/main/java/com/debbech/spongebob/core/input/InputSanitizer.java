@@ -1,4 +1,4 @@
-package com.debbech.spongebob.input;
+package com.debbech.spongebob.core.input;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
