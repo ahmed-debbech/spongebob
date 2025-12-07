@@ -35,6 +35,8 @@ public class InputQueuesRegistrar {
     private void register_in_proc_qu() throws RuntimeException{
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(Config.getInstance().rabbitMqHost);
+        factory.setAutomaticRecoveryEnabled(true);
+        factory.setNetworkRecoveryInterval(5000);
         Connection connection = null;
 
         Channel channel = null;
@@ -42,14 +44,24 @@ public class InputQueuesRegistrar {
             connection = factory.newConnection();
             channel = connection.createChannel();
             channel.queueDeclare(Config.getInstance().in_proc_qu, true, false, false, null);
+            channel.basicQos(1);
 
             Channel finalChannel = channel;
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), "UTF-8");
                 log.info("Received '" + message + "' from queue " + Config.getInstance().in_proc_qu);
-                if(this.inputQueuesHandler.handle_in_proc_qu(message)) {
-                    finalChannel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+                int attempt = Config.getInstance().processAttempts;
+                do{
+                    if(this.inputQueuesHandler.handle_in_proc_qu(message)) {
+                        break;
+                    }
+                    attempt--;
+                }while(attempt > 0);
+
+                if(attempt == 0){ //job not succeeded
+                    //todo notify admin
                 }
+                finalChannel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
             };
             channel.basicConsume(Config.getInstance().in_proc_qu, false, deliverCallback, consumerTag -> { });
             log.info("{} queue is now ready and listening for events", Config.getInstance().in_proc_qu);

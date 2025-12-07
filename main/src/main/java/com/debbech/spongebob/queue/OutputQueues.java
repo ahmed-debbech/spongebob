@@ -23,10 +23,11 @@ public class OutputQueues {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(Config.getInstance().rabbitMqHost);
 
-        try (Connection connection = factory.newConnection();
-             Channel channel = connection.createChannel()) {
+        try (Connection connection = factory.newConnection(); Channel channel = connection.createChannel()) {
+            channel.basicQos(1);
 
             channel.queueDeclare(Config.getInstance().out_ulp_yt, true, false, false, null);
+
             channel.basicPublish("", Config.getInstance().out_ulp_yt, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes(StandardCharsets.UTF_8));
             log.info("published message to queue {}", Config.getInstance().out_ulp_yt);
         } catch (IOException e) {

@@ -18,6 +18,7 @@ public class Config {
     public String googleSecretFile = "google.json";
     public String container_mp3_path = "/app/mp3";
     public String container_output_path = "/app/output";
+    public int processAttempts = 5;
 
     private static Config config = null;
     private static Logger log = LoggerFactory.getLogger(SpongeBob.class);
