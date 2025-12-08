@@ -2,7 +2,6 @@ ffmpeg
 build
 .idea
 target
-google.json
 *.log
 upload_mock
 filefrom*

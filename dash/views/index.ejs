@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Retro SoundCloud -> YouTube</title>
+  <style>
+    /* Retro 80s / CRT-ish look using only CSS */
+    :root{
+      --bg1:#08121f; /* deep navy */
+      --bg2:#0b2233; /* teal-ish */
+      --accent:#ff6ec7; /* hot pink */
+      --accent2:#56f0ff; /* cyan */
+      --panel:#051219;
+      --glass: rgba(255,255,255,0.03);
+      --cream:#f7f1e3;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(86,240,255,0.06), transparent 8%),
+                  radial-gradient(900px 400px at 90% 90%, rgba(255,110,199,0.04), transparent 8%),
+                  linear-gradient(180deg,var(--bg1), var(--bg2));
+      color:var(--cream);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:32px;
+      box-sizing:border-box;
+    }
+
+    /* outer retro frame */
+    .frame{
+      width:min(880px,96vw);
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+      border:6px solid #0f1620;
+      border-radius:18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      padding:28px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* subtle scanlines */
+    .frame::before{
+      content:"";
+      pointer-events:none;
+      position:absolute;inset:0;
+      background-image:linear-gradient(rgba(0,0,0,0.02) 50%, rgba(255,255,255,0.01) 51%);
+      background-size:100% 4px;
+      mix-blend-mode:overlay;
+    }
+
+    header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+    .logo{
+      width:68px;height:68px;border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:flex;align-items:center;justify-content:center;font-weight:700;color:#031018;font-size:18px;
+      box-shadow: 0 6px 18px rgba(86,240,255,0.08);
+      border:2px solid rgba(255,255,255,0.06);
+    }
+    h1{font-size:18px;margin:0;letter-spacing:1px}
+    p.lead{margin:0;color:rgba(247,241,227,0.72);font-size:12px}
+
+    /* center area */
+    .center{
+      display:flex;flex-direction:column;align-items:center;gap:14px;
+    }
+
+    /* input row */
+    .row{
+      display:flex;gap:10px;align-items:center;width:100%;
+    }
+    .row .lfield{flex:1;display:flex;gap:10px;align-items:center}
+    .lfield input[type="text"]{
+      width:100%;padding:14px 12px;border-radius:10px;border:2px solid rgba(255,255,255,0.06);
+      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));
+      color:var(--cream);font-size:13px;outline:none;box-shadow: inset 0 -6px 12px rgba(0,0,0,0.2);
+    }
+    .lfield input[type="text"]::placeholder{color:rgba(247,241,227,0.35)}
+
+    button.btn{
+      padding:12px 16px;border-radius:10px;border:2px solid rgba(255,255,255,0.06);
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
+      color:var(--cream);font-weight:700;letter-spacing:1px;cursor:pointer;font-size:13px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    }
+
+    /* main square list */
+    .list-box{
+      width:420px;max-width:92vw;height:320px;border-radius:12px;border:3px solid rgba(255,255,255,0.04);
+      background: linear-gradient(180deg, rgba(3,9,12,0.6), rgba(10,20,26,0.7));
+      padding:12px;box-sizing:border-box;overflow:auto;position:relative;
+      display:flex;flex-direction:column;gap:8px;
+    }
+
+    .track{
+      display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px;
+      border:1px dashed rgba(255,255,255,0.03);
+      background: linear-gradient(90deg, rgba(255,255,255,0.01), transparent);
+    }
+    .track .idx{width:36px;height:36px;border-radius:6px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .track strong{font-size:13px}
+    .track small{color:rgba(247,241,227,0.5);display:block}
+
+    /* footer controls */
+    .controls{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:10px;width:100%}
+    .controls .row2{display:flex;gap:12px;align-items:center}
+
+    .download{
+      padding:12px 18px;border-radius:10px;background:linear-gradient(180deg,var(--accent),#ff8abf);
+      border:2px solid rgba(0,0,0,0.28);color:#041018;font-weight:800;cursor:pointer;
+      box-shadow:0 8px 30px rgba(255,110,199,0.12);
+    }
+
+    select.select-channel{
+      padding:12px 14px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+      border:2px solid rgba(255,255,255,0.04);color:var(--cream);font-weight:700;font-size:13px;outline:none;
+    }
+
+    /* centered layout */
+    .vcenter{display:flex;flex-direction:column;align-items:center;gap:12px}
+
+    /* small screens adjustments */
+    @media (max-width:520px){
+      .frame{padding:18px}
+      header{gap:8px}
+      .logo{width:54px;height:54px;font-size:15px}
+      .list-box{height:260px}
+      .row{flex-direction:column;align-items:stretch}
+      .row .lfield{width:100%}
+      .row .lfield input[type="text"]{padding:12px}
+      .row button.btn{width:100%}
+      .controls .row2{flex-direction:column;width:100%}
+      .download{width:100%}
+      select.select-channel{width:100%}
+    }
+
+    /* tiny decorative corner indicators */
+    .corner{
+      position:absolute;width:36px;height:36px;border:3px solid rgba(255,255,255,0.03);border-radius:6px;opacity:0.8;mix-blend-mode:screen
+    }
+    .corner.tl{left:10px;top:10px;transform:rotate(6deg)}
+    .corner.br{right:10px;bottom:10px;transform:rotate(-6deg)}
+
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="corner tl"></div>
+    <div class="corner br"></div>
+
+    <header>
+      <div class="logo">SC</div>
+      <div>
+        <h1>Retro SoundCloud Downloader</h1>
+        <p class="lead">Paste a SoundCloud playlist URL and save — retro vibes only.</p>
+      </div>
+    </header>
+
+    <main class="center vcenter">
+
+      <div class="row" style="width:100%">
+        <div class="lfield">
+          <input type="text" placeholder="https://soundcloud.com/username/sets/playlist-name" aria-label="soundcloud playlist url" />
+        </div>
+        <button class="btn" type="button">Save</button>
+      </div>
+
+      <div class="list-box" role="list" aria-label="playlist tracks">
+        <!-- Example static items to show layout; replace dynamically in JS if needed -->
+        <div class="track" role="listitem"><div class="idx">1</div><div><strong>Track title one</strong><small>Artist • 3:12</small></div></div>
+        <div class="track" role="listitem"><div class="idx">2</div><div><strong>Track title two</strong><small>Artist • 2:54</small></div></div>
+        <div class="track" role="listitem"><div class="idx">3</div><div><strong>Track title three</strong><small>Artist • 4:01</small></div></div>
+        <div class="track" role="listitem"><div class="idx">4</div><div><strong>Track title four</strong><small>Artist • 5:05</small></div></div>
+        <div class="track" role="listitem"><div class="idx">5</div><div><strong>Track title five</strong><small>Artist • 3:42</small></div></div>
+        <div class="track" role="listitem"><div class="idx">6</div><div><strong>Track title six</strong><small>Artist • 2:20</small></div></div>
+      </div>
+
+      <div class="controls">
+        <div class="row2">
+          <button id="ytBtn" class="btn" type="button" style="transition:all 0.25s ease; position:relative; overflow:hidden;">Select YouTube Channel</button>
+          <div id="ytInfo" style="display:none;font-size:12px;color:rgba(247,241,227,0.75);margin-top:6px;">Login expires in: <span id="expTime">10:00</span></div>
+        </div>
+        <script>
+  const ytBtn = document.getElementById('ytBtn');
+  const ytInfo = document.getElementById('ytInfo');
+  const expTime = document.getElementById('expTime');
+
+  let active = false;
+  let timer = null;
+  let seconds = 600;
+
+  ytBtn.addEventListener('mouseenter', () => {
+    if(active){
+      ytBtn.style.borderColor = 'red';
+      ytBtn.style.color = 'red';
+    }
+  });
+
+  ytBtn.addEventListener('mouseleave', () => {
+    ytBtn.style.borderColor = '';
+    ytBtn.style.color = '';
+  });
+
+  ytBtn.addEventListener('click', () => {
+    // Toggle mode
+    active = !active;
+
+    if(active){
+      // EXPAND + show info
+      ytBtn.style.padding = '18px 22px';
+      ytInfo.style.display = 'block';
+      seconds = 600;
+      expTime.textContent = '10:00';
+
+      timer = setInterval(() => {
+        seconds--;
+        const m = String(Math.floor(seconds/60)).padStart(2,'0');
+        const s = String(seconds%60).padStart(2,'0');
+        expTime.textContent = `${m}:${s}`;
+        if(seconds <= 0) clearInterval(timer);
+      }, 1000);
+
+    } else {
+      // CANCEL — collapse and hide info
+      ytBtn.style.padding = '12px 16px';
+      ytBtn.style.opacity = '1';
+      ytInfo.style.display = 'none';
+
+      clearInterval(timer);
+      timer = null;
+    }
+  });
+</script>
+      </div>
+
+    </main>
+
+  </div>
+</body>
+</html>

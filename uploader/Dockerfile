@@ -8,5 +8,6 @@ RUN mvn clean package -DskipTests
 # Stage 2: Run the JAR
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
+COPY google.json .
 COPY --from=build /app/target/*-with-dependencies.jar app.jar
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

@@ -1,9 +1,8 @@
 package com.debbech.spongebob;
 
+import com.debbech.spongebob.control.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.time.LocalDateTime;
 
 
 public class SpongeBob {
@@ -13,6 +12,9 @@ public class SpongeBob {
     public static void main(String[] args) {
 
         log.info("Spongebob uploader started up & running...");
+
+        Config.getInstance().setGoogleConfig();
+
         new Thread(() -> {
             while(true) {
                 try {
@@ -24,6 +26,8 @@ public class SpongeBob {
             }
         }).start();
 
+        Controller controller = new Controller();
+        controller.listenForEvents();
     }
 
 }

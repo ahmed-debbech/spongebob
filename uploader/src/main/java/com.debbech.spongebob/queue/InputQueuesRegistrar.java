@@ -29,10 +29,10 @@ public class InputQueuesRegistrar {
         return instance;
     }
     public void registerAll() throws RuntimeException{
-        register_in_proc_qu();
+        register_in_upl_yt();
     }
 
-    private void register_in_proc_qu() throws RuntimeException{
+    private void register_in_upl_yt() throws RuntimeException{
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(Config.getInstance().rabbitMqHost);
         factory.setAutomaticRecoveryEnabled(true);
@@ -43,16 +43,16 @@ public class InputQueuesRegistrar {
         try {
             connection = factory.newConnection();
             channel = connection.createChannel();
-            channel.queueDeclare(Config.getInstance().in_proc_qu, true, false, false, null);
+            channel.queueDeclare(Config.getInstance().in_upl_yt, true, false, false, null);
             channel.basicQos(1);
 
             Channel finalChannel = channel;
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), "UTF-8");
-                log.info("Received '" + message + "' from queue " + Config.getInstance().in_proc_qu);
+                log.info("Received '" + message + "' from queue " + Config.getInstance().in_upl_yt);
                 int attempt = Config.getInstance().processAttempts;
                 do{
-                    if(this.inputQueuesHandler.handle_in_proc_qu(message)) {
+                    if(this.inputQueuesHandler.handle_in_upl_yt(message)) {
                         finalChannel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
                         break;
                     }
@@ -64,13 +64,13 @@ public class InputQueuesRegistrar {
                     finalChannel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, true);
                 }
             };
-            channel.basicConsume(Config.getInstance().in_proc_qu, false, deliverCallback, consumerTag -> { });
-            log.info("{} queue is now ready and listening for events", Config.getInstance().in_proc_qu);
+            channel.basicConsume(Config.getInstance().in_upl_yt, false, deliverCallback, consumerTag -> { });
+            log.info("{} queue is now ready and listening for events", Config.getInstance().in_upl_yt);
 
         } catch (IOException e) {
-            throw new RuntimeException("Error occured while registering input queue " + Config.getInstance().in_proc_qu + ": " + e);
+            throw new RuntimeException("Error occured while registering input queue " + Config.getInstance().in_upl_yt + ": " + e);
         } catch (TimeoutException e) {
-            throw new RuntimeException("Error occured while registering input queue " + Config.getInstance().in_proc_qu + ": " + e);
+            throw new RuntimeException("Error occured while registering input queue " + Config.getInstance().in_upl_yt + ": " + e);
         }
     }
 }
