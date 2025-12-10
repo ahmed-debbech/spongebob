@@ -56,11 +56,18 @@ public class InputQueuesRegistrar {
                         finalChannel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
                         break;
                     }
+                    log.info("this is the {} attempt after task failed", attempt);
                     attempt--;
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }while(attempt > 0);
 
                 if(attempt == 0){ //job not succeeded
                     //todo notify admin
+                    log.info("task failed completely after {} times of retrying, will requeue it", attempt);
                     finalChannel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, true);
                 }
             };

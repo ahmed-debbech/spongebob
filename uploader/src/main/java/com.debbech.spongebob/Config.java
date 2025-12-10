@@ -12,9 +12,9 @@ public class Config {
     public String in_upl_yt = "UPLOAD_TO_YOUTUBE";
     public int PORT = 9004;
     public int timeToStopCallbackServer = 600; // 10 min
-    public boolean bypassGoogleAuth = true;
     public String rabbitMqHost = "rabbitmq";
     public String googleSecretFile = "google.json";
+    public String google_redirect_uri = "http://localhost:3600";
     public int processAttempts = 5;
 
     private static Config config = null;

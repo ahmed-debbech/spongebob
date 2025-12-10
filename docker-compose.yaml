@@ -32,11 +32,26 @@ services:
     container_name: uploader
     networks:
       - spongebob-net
+    ports:
+      - 7070:7070
     depends_on:
       rabbitmq:
         condition: service_healthy
       
-  
+  dash:
+    build: ./dash
+    image: spongebob_dash:latest
+    container_name: dash
+    networks:
+      - spongebob-net
+    environment:
+      - GOOGLE_REDIRECT_URI=http://localhost:3600
+    ports:
+      - 3600:3600
+    depends_on:
+      - uploader
+      - main
+
 networks:
   spongebob-net:
     driver: bridge

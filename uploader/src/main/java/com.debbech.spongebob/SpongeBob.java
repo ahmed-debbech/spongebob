@@ -1,5 +1,6 @@
 package com.debbech.spongebob;
 
+import com.debbech.spongebob.control.AuthRestController;
 import com.debbech.spongebob.control.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,9 @@ public class SpongeBob {
                 }
             }
         }).start();
+
+        AuthRestController authRestController = new AuthRestController();
+        authRestController.startAuthRestServer();
 
         Controller controller = new Controller();
         controller.listenForEvents();
