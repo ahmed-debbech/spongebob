@@ -1,43 +1,5 @@
 services:
 
-  rabbitmq:
-    image: rabbitmq:4.1.6-management-alpine
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    networks:
-      - spongebob-net
-    healthcheck:
-      test: rabbitmq-diagnostics -q ping
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  main:
-    build: ./main
-    image: spongebob_main:latest
-    container_name: main
-    volumes:
-      - ./mp3:/app/mp3 #modify Config.java with path in container
-      - ./output:/app/output #modify Config.java with path in container
-    networks:
-      - spongebob-net
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-
-  uploader:
-    build: ./uploader
-    image: spongebob_uploader:latest
-    container_name: uploader
-    networks:
-      - spongebob-net
-    ports:
-      - 7070:7070
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      
   dash:
     build: ./dash
     image: spongebob_dash:latest
@@ -49,9 +11,19 @@ services:
     ports:
       - 3600:3600
     depends_on:
-      - uploader
-      - main
-
+      - scdown
+  
+  scdown:
+    build: ./scdown
+    image: spongebob_scdown:latest
+    container_name: scdown
+    networks:
+      - spongebob-net
+    volumes:
+      - ./scdownloads:/app/scdownloads
+    ports:
+      - 7071:7071
+      
 networks:
   spongebob-net:
     driver: bridge

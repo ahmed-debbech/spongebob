@@ -45,13 +45,19 @@ public class YoutubeCore {
     }
 
     private boolean isTokenValid(){
-        log.info("tokens: {}", this.userTokens);
-        return false;
+        if(this.userTokens == null) return false;
+        if(this.userTokens.access_token.isEmpty()) return false;
+        if(((System.currentTimeMillis()/1000) - this.userTokens.issued) > this.userTokens.expires_in){
+            //todo add refresh token mechanism using this https://developers.google.com/oauthplayground/#step2&apisSelect=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube%2Chttps%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&url=https%3A%2F%2F&content_type=application%2Fjson&http_method=GET&useDefaultOauthCred=unchecked&oauthEndpointSelect=Google&oauthAuthEndpointValue=https%3A%2F%2Faccounts.google.com%2Fo%2Foauth2%2Fv2%2Fauth&oauthTokenEndpointValue=https%3A%2F%2Foauth2.googleapis.com%2Ftoken&includeCredentials=unchecked&accessTokenType=bearer&autoRefreshToken=unchecked&accessType=offline&prompt=consent&response_type=code&wrapLines=on
+            return false;
+        }
+        return true;
     }
 
 
     public void setUserTokens(TokenResp tr){
         this.userTokens = tr;
+        this.userTokens.issued = System.currentTimeMillis()/1000;
     }
 
     public TokenResp getTokens(String code) throws Exception{

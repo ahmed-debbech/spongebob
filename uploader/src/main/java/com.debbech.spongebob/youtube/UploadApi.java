@@ -25,14 +25,15 @@ public class UploadApi {
         try {
             this.locationUpload = startResumableSession();
             long lastByte = 0;
-            while(true) {
+            uploadVideo(lastByte);
+            /*while(true) {
                 if(uploadVideo(lastByte) == false){
                     lastByte = checkStatus();
                     lastByte = lastByte+1;
                 }else{
                     break;
                 }
-            }
+            }*/
         }catch (Exception e){
             throw e;
         }
