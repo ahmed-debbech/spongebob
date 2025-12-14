@@ -10,6 +10,8 @@ services:
       - GOOGLE_REDIRECT_URI=http://localhost:3600
     ports:
       - 3600:3600
+    volumes:
+      - ./scdownloads:/app/scdownloads
     depends_on:
       - scdown
   
@@ -22,7 +24,7 @@ services:
     volumes:
       - ./scdownloads:/app/scdownloads
     ports:
-      - 7071:7071
+      - 20001:20001 
       
 networks:
   spongebob-net:

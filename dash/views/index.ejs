@@ -2,244 +2,244 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Retro SoundCloud -> YouTube</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SpongeBob</title>
   <style>
-    /* Retro 80s / CRT-ish look using only CSS */
-    :root{
-      --bg1:#08121f; /* deep navy */
-      --bg2:#0b2233; /* teal-ish */
-      --accent:#ff6ec7; /* hot pink */
-      --accent2:#56f0ff; /* cyan */
-      --panel:#051219;
-      --glass: rgba(255,255,255,0.03);
-      --cream:#f7f1e3;
-    }
-    html,body{height:100%;}
     body{
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
       margin:0;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
-      background: radial-gradient(1200px 600px at 10% 10%, rgba(86,240,255,0.06), transparent 8%),
-                  radial-gradient(900px 400px at 90% 90%, rgba(255,110,199,0.04), transparent 8%),
-                  linear-gradient(180deg,var(--bg1), var(--bg2));
-      color:var(--cream);
+      padding:40px;
+      background:#0f0f0f;
+      color:#eee;
       display:flex;
+      flex-direction:column;
       align-items:center;
-      justify-content:center;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      padding:32px;
-      box-sizing:border-box;
+    }
+    h2{color:#ff8c32;margin-bottom:20px;font-size:28px}
+
+    .container{
+      width:100%;
+      max-width:700px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
     }
 
-    /* outer retro frame */
-    .frame{
-      width:min(880px,96vw);
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
-      border:6px solid #0f1620;
-      border-radius:18px;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-      padding:28px;
-      position:relative;
-      overflow:hidden;
-    }
-
-    /* subtle scanlines */
-    .frame::before{
-      content:"";
-      pointer-events:none;
-      position:absolute;inset:0;
-      background-image:linear-gradient(rgba(0,0,0,0.02) 50%, rgba(255,255,255,0.01) 51%);
-      background-size:100% 4px;
-      mix-blend-mode:overlay;
-    }
-
-    header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
-    .logo{
-      width:68px;height:68px;border-radius:10px;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      display:flex;align-items:center;justify-content:center;font-weight:700;color:#031018;font-size:18px;
-      box-shadow: 0 6px 18px rgba(86,240,255,0.08);
-      border:2px solid rgba(255,255,255,0.06);
-    }
-    h1{font-size:18px;margin:0;letter-spacing:1px}
-    p.lead{margin:0;color:rgba(247,241,227,0.72);font-size:12px}
-
-    /* center area */
-    .center{
-      display:flex;flex-direction:column;align-items:center;gap:14px;
-    }
-
-    /* input row */
     .row{
-      display:flex;gap:10px;align-items:center;width:100%;
+      display:flex;
+      gap:10px;
+      width:100%;
     }
-    .row .lfield{flex:1;display:flex;gap:10px;align-items:center}
-    .lfield input[type="text"]{
-      width:100%;padding:14px 12px;border-radius:10px;border:2px solid rgba(255,255,255,0.06);
-      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));
-      color:var(--cream);font-size:13px;outline:none;box-shadow: inset 0 -6px 12px rgba(0,0,0,0.2);
+    input[type=text]{
+      padding:12px;
+      flex:1;
+      background:#1a1a1a;
+      border:1px solid #333;
+      color:#eee;
+      border-radius:8px;
     }
-    .lfield input[type="text"]::placeholder{color:rgba(247,241,227,0.35)}
-
-    button.btn{
-      padding:12px 16px;border-radius:10px;border:2px solid rgba(255,255,255,0.06);
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));
-      color:var(--cream);font-weight:700;letter-spacing:1px;cursor:pointer;font-size:13px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    button{
+      padding:12px 18px;
+      border-radius:8px;
+      border:none;
+      background:#ff8c32;
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
+      transition:0.2s;
     }
+    button:hover{background:#ffa65c}
 
-    /* main square list */
-    .list-box{
-      width:420px;max-width:92vw;height:320px;border-radius:12px;border:3px solid rgba(255,255,255,0.04);
-      background: linear-gradient(180deg, rgba(3,9,12,0.6), rgba(10,20,26,0.7));
-      padding:12px;box-sizing:border-box;overflow:auto;position:relative;
-      display:flex;flex-direction:column;gap:8px;
+    .tracks{
+      border:1px solid #333;
+      border-radius:10px;
+      overflow:hidden;
+      background:#1a1a1a;
     }
-
-    .track{
-      display:flex;align-items:center;gap:12px;padding:8px;border-radius:8px;
-      border:1px dashed rgba(255,255,255,0.03);
-      background: linear-gradient(90deg, rgba(255,255,255,0.01), transparent);
+    .tracks-header{
+      padding:12px;
+      border-bottom:1px solid #333;
+      background:#161616;
+      font-weight:bold;
     }
-    .track .idx{width:36px;height:36px;border-radius:6px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;font-weight:700}
-    .track strong{font-size:13px}
-    .track small{color:rgba(247,241,227,0.5);display:block}
+    .tracks .list{height:220px;overflow:auto}
 
-    /* footer controls */
-    .controls{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:10px;width:100%}
-    .controls .row2{display:flex;gap:12px;align-items:center}
+    table{width:100%;border-collapse:collapse;color:#eee}
+    th,td{padding:10px;border-bottom:1px solid #222;text-align:left}
+    tr:hover{background:#181818}
 
-    .download{
-      padding:12px 18px;border-radius:10px;background:linear-gradient(180deg,var(--accent),#ff8abf);
-      border:2px solid rgba(0,0,0,0.28);color:#041018;font-weight:800;cursor:pointer;
-      box-shadow:0 8px 30px rgba(255,110,199,0.12);
-    }
-
-    select.select-channel{
-      padding:12px 14px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
-      border:2px solid rgba(255,255,255,0.04);color:var(--cream);font-weight:700;font-size:13px;outline:none;
-    }
-
-    /* centered layout */
-    .vcenter{display:flex;flex-direction:column;align-items:center;gap:12px}
-
-    /* small screens adjustments */
-    @media (max-width:520px){
-      .frame{padding:18px}
-      header{gap:8px}
-      .logo{width:54px;height:54px;font-size:15px}
-      .list-box{height:260px}
-      .row{flex-direction:column;align-items:stretch}
-      .row .lfield{width:100%}
-      .row .lfield input[type="text"]{padding:12px}
-      .row button.btn{width:100%}
-      .controls .row2{flex-direction:column;width:100%}
-      .download{width:100%}
-      select.select-channel{width:100%}
+    textarea{
+      width:100%;
+      height:160px;
+      padding:10px;
+      background:#1a1a1a;
+      border:1px solid #333;
+      border-radius:8px;
+      color:#eee;
+      font-family:monospace;
+      resize:vertical;
     }
 
-    /* tiny decorative corner indicators */
-    .corner{
-      position:absolute;width:36px;height:36px;border:3px solid rgba(255,255,255,0.03);border-radius:6px;opacity:0.8;mix-blend-mode:screen
-    }
-    .corner.tl{left:10px;top:10px;transform:rotate(6deg)}
-    .corner.br{right:10px;bottom:10px;transform:rotate(-6deg)}
-
+    .hidden{display:none}
   </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 </head>
 <body>
-  <div class="frame">
-    <div class="corner tl"></div>
-    <div class="corner br"></div>
+  <h2>Set your playlist</h2>
+  <div class="container">
 
-    <header>
-      <div class="logo">SC</div>
-      <div>
-        <h1>Retro SoundCloud Downloader</h1>
-        <p class="lead">Paste a SoundCloud playlist URL and save — retro vibes only.</p>
+    <div class="row">
+      <input id="playlistInput" type="text" placeholder="Enter playlist URL" />
+      <button id="setBtn">Set</button>
+    </div>
+
+    <div class="tracks" id="tracksCard">
+      <div class="tracks-header">Tracks</div>
+      <div class="list" id="tracksList">
+        <table aria-label="playlist tracks">
+          <thead>
+            <tr><th style="width:72px">#</th><th>Title</th></tr>
+          </thead>
+          <tbody id="tracksTbody"></tbody>
+        </table>
       </div>
-    </header>
+    </div>
 
-    <main class="center vcenter">
+    <button id="downloadAll" style="width:100%;margin-top:6px">Download all</button>
 
-      <div class="row" style="width:100%">
-        <div class="lfield">
-          <input type="text" placeholder="https://soundcloud.com/username/sets/playlist-name" aria-label="soundcloud playlist url" />
-        </div>
-        <button class="btn" type="button">Save</button>
-      </div>
+    <div id="logArea" class="hidden" style="margin-top:10px">
+      <textarea id="log" readonly></textarea>
+    </div>
 
-      <div class="list-box" role="list" aria-label="playlist tracks">
-        <!-- Example static items to show layout; replace dynamically in JS if needed -->
-        <div class="track" role="listitem"><div class="idx">1</div><div><strong>Track title one</strong><small>Artist • 3:12</small></div></div>
-        <div class="track" role="listitem"><div class="idx">2</div><div><strong>Track title two</strong><small>Artist • 2:54</small></div></div>
-        <div class="track" role="listitem"><div class="idx">3</div><div><strong>Track title three</strong><small>Artist • 4:01</small></div></div>
-        <div class="track" role="listitem"><div class="idx">4</div><div><strong>Track title four</strong><small>Artist • 5:05</small></div></div>
-        <div class="track" role="listitem"><div class="idx">5</div><div><strong>Track title five</strong><small>Artist • 3:42</small></div></div>
-        <div class="track" role="listitem"><div class="idx">6</div><div><strong>Track title six</strong><small>Artist • 2:20</small></div></div>
-      </div>
-
-      <div class="controls">
-        <div class="row2">
-          <button onclick="window.open('https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&response_type=code&redirect_uri=<%=google_redirect_uri%>%2Foauth&client_id=454274022734-pq4m07rn6gf5dphsoq1dsif64sibrskd.apps.googleusercontent.com', '_blank')" id="ytBtn" class="btn" type="button" style="transition:all 0.25s ease; position:relative; overflow:hidden;">Select YouTube Channel</button>
-          <div id="ytInfo" style="display:none;font-size:12px;color:rgba(247,241,227,0.75);margin-top:6px;">Login expires in: <span id="expTime">10:00</span></div>
-        </div>
-        <script>
-  const ytBtn = document.getElementById('ytBtn');
-  const ytInfo = document.getElementById('ytInfo');
-  const expTime = document.getElementById('expTime');
-
-  let active = false;
-  let timer = null;
-  let seconds = 600;
-
-  ytBtn.addEventListener('mouseenter', () => {
-    if(active){
-      ytBtn.style.borderColor = 'red';
-      ytBtn.style.color = 'red';
-    }
-  });
-
-  ytBtn.addEventListener('mouseleave', () => {
-    ytBtn.style.borderColor = '';
-    ytBtn.style.color = '';
-  });
-
-  ytBtn.addEventListener('click', () => {
-    // Toggle mode
-    active = !active;
-
-    if(active){
-      // EXPAND + show info
-      ytBtn.style.padding = '18px 22px';
-      ytInfo.style.display = 'block';
-      seconds = 600;
-      expTime.textContent = '10:00';
-
-      timer = setInterval(() => {
-        seconds--;
-        const m = String(Math.floor(seconds/60)).padStart(2,'0');
-        const s = String(seconds%60).padStart(2,'0');
-        expTime.textContent = `${m}:${s}`;
-        if(seconds <= 0) clearInterval(timer);
-      }, 1000);
-
-    } else {
-      // CANCEL — collapse and hide info
-      ytBtn.style.padding = '12px 16px';
-      ytBtn.style.opacity = '1';
-      ytInfo.style.display = 'none';
-
-      clearInterval(timer);
-      timer = null;
-    }
-  });
-</script>
-      </div>
-
-    </main>
+    <button onclick="downloadNow()" id="dn" class="hidden" style="width:100%;margin-top:6px; background-color: green;">Download Now!</button>
 
   </div>
+
+  <script>
+    const playlistInput = document.getElementById('playlistInput');
+    const setBtn = document.getElementById('setBtn');
+    const tracksTbody = document.getElementById('tracksTbody');
+    const downloadAll = document.getElementById('downloadAll');
+    const logArea = document.getElementById('logArea');
+    const logEl = document.getElementById('log');
+
+    let socket = null;
+
+    function downloadNow(){
+      document.getElementById("dn").innerText="will begin shortly...";
+      setTimeout(()=>{
+        document.getElementById("dn").classList.add("hidden")
+      }, 4000)
+      window.open('/getFile', '_blank')
+    }
+
+    function populateTable(list){
+      console.log(list)
+      tracksTbody.innerHTML = '';
+      list.forEach((t,i)=>{
+        const tr = document.createElement('tr');
+        const tdIdx = document.createElement('td'); tdIdx.textContent = i+1;
+        const tdTitle = document.createElement('td'); tdTitle.innerHTML = "<a href='"+t.permalink_url+"'>"+t.title+"</a>";
+        tr.appendChild(tdIdx); tr.appendChild(tdTitle);
+        tracksTbody.appendChild(tr);
+      });
+    }
+
+    setBtn.addEventListener('click', ()=>{
+      setBtn.disabled = true
+      $.ajax({
+          contentType: 'application/json',
+          data: JSON.stringify({
+              "playlistUrl" : playlistInput.value
+          }),
+          dataType: 'json',
+          success: function(data){
+              setBtn.disabled = false
+              console.log(data.tracklist)
+              populateTable(data.tracklist);
+          },
+          error: function(err){
+              setBtn.disabled = false
+              let g = JSON.parse(err.responseText)
+              alert("ERROR: "+ g.reason.because)
+          },
+          processData: false,
+          type: 'POST',
+          url: '/setPlaylist'
+      });
+    });
+
+    function appendLog(line){
+      // fixed quoting for newline character
+      logEl.value += line + '\n';
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    downloadAll.addEventListener('click', ()=>{
+
+      $.ajax({
+          contentType: 'application/json',
+          dataType: 'json',
+          success: function(dataa){
+
+            if(dataa.error == true) {alert("ERROR happend even when 200")}
+
+          
+          },
+          error: function(err){
+              setBtn.disabled = false
+              let g = JSON.parse(err.responseText)
+              alert("ERROR: "+ g.reason.because)
+          },
+          processData: false,
+          type: 'GET',
+          url: '/downloadPlaylist'
+      });
+
+      const wsUrl = 'ws://'+ location.hostname+':20001/chat';
+      logArea.classList.remove('hidden');
+      logEl.value = '';
+      appendLog('Connecting to ' + wsUrl + ' ...');
+
+      try{
+        socket = new WebSocket(wsUrl);
+      }catch(err){ appendLog('WebSocket error: ' + err.message); return }
+
+      downloadAll.disabled = true;
+
+      socket.addEventListener('open', ()=>{
+        appendLog('Socket opened...');
+      });
+
+      socket.addEventListener('message', (ev)=>{
+        let data = ev.data;
+        try{
+          appendLog(data);
+          if(data == "[DONE]"){ 
+            appendLog('done'); 
+            socket.close();  
+            document.getElementById("dn").classList.remove('hidden')
+          }
+        }catch(e){
+          appendLog(data);
+          socket.close();
+        }
+      });
+
+      socket.addEventListener('close', ()=>{
+        appendLog('Socket closed.');
+        downloadAll.disabled = false;
+      });
+
+      socket.addEventListener('error', ()=>{
+        appendLog('Socket error');
+        downloadAll.disabled = false;
+      });
+
+
+    });
+
+  </script>
 </body>
 </html>

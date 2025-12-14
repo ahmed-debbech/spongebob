@@ -6,7 +6,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Stage 2: Run the JAR
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:21-jdk-alpine
 WORKDIR /app
 COPY ffmpeg .
 COPY --from=build /app/target/*-with-dependencies.jar app.jar

@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 
 public class Config {
 
-    public int PORT = 7071;
+    public int PORT = 20000;
+    public int websocket_port = 20001;
+
     private static Config config = null;
     private static Logger log = LoggerFactory.getLogger(Config.class);
 
