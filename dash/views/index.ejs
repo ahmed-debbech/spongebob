@@ -99,7 +99,7 @@
       <div class="list" id="tracksList">
         <table aria-label="playlist tracks">
           <thead>
-            <tr><th style="width:72px">#</th><th>Title</th></tr>
+            <tr><th style="width:72px">#</th><th>Title</th> <th>Link</th></tr>
           </thead>
           <tbody id="tracksTbody"></tbody>
         </table>
@@ -140,8 +140,10 @@
       list.forEach((t,i)=>{
         const tr = document.createElement('tr');
         const tdIdx = document.createElement('td'); tdIdx.textContent = i+1;
-        const tdTitle = document.createElement('td'); tdTitle.innerHTML = "<a href='"+t.permalink_url+"'>"+t.title+"</a>";
-        tr.appendChild(tdIdx); tr.appendChild(tdTitle);
+        const tdTitle = document.createElement('td'); tdTitle.innerText = t.title;
+        const tdLink = document.createElement('td'); tdLink.innerHTML = "<a href='"+t.permalink_url+"'>See</a>";
+
+        tr.appendChild(tdIdx); tr.appendChild(tdTitle); tr.appendChild(tdLink);
         tracksTbody.appendChild(tr);
       });
     }

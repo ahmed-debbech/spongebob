@@ -8,9 +8,14 @@ RUN mvn clean package -DskipTests
 # Stage 2: Run the JAR
 FROM eclipse-temurin:21-jdk-alpine
 WORKDIR /app
+
+RUN apk update \
+ && apk add --no-cache ffmpeg
+
 RUN sed -i 's|dl-cdn.alpinelinux.org|dl-2.alpinelinux.org|g' /etc/apk/repositories \
  && apk update \
  && apk add --no-cache zip
+
 RUN mkdir download
 COPY scdl_bin .
 COPY --from=build /app/target/*-with-dependencies.jar app.jar

@@ -4,6 +4,7 @@ import com.debbech.spongebob.websocket.WsServer;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,6 +25,31 @@ public class Download {
                 File obj = new File("./download");
                 deleteDirectory(obj);
                 throw new Exception("Error executing command: " + e.getMessage());
+            }
+        }
+
+        List<Path> files;
+        try (var stream = Files.list(Paths.get("./download"))) {
+            files = stream
+                    .filter(Files::isRegularFile)
+                    .toList();
+        }
+
+        for (Path oggFile : files){
+            try {
+                new ProcessBuilder(
+                        "sh",
+                        "-c",
+                        "ffmpeg -i \""+oggFile+"\" -map_metadata 0 -vn -c:a libmp3lame -q:a 0 \""+oggFile+".mp3\""
+                ).start().waitFor();
+
+                WsServer.getInstance().adminBroadcast("converted " + oggFile +" to mp3");
+
+                Files.delete(oggFile);
+            }catch (Exception e){
+                File obj = new File("./download");
+                deleteDirectory(obj);
+                throw new Exception("Error executing command for converting ogg -> mp3: " + e.getMessage());
             }
         }
 
