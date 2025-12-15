@@ -147,6 +147,7 @@
     }
 
     setBtn.addEventListener('click', ()=>{
+      setBtn.innerText = "Setting... please wait"
       setBtn.disabled = true
       $.ajax({
           contentType: 'application/json',
@@ -158,11 +159,14 @@
               setBtn.disabled = false
               console.log(data.tracklist)
               populateTable(data.tracklist);
+              setBtn.innerText = "Set"
           },
           error: function(err){
               setBtn.disabled = false
               let g = JSON.parse(err.responseText)
               alert("ERROR: "+ g.reason.because)
+              setBtn.innerText = "Set"
+
           },
           processData: false,
           type: 'POST',
@@ -219,6 +223,7 @@
           if(data == "[DONE]"){ 
             appendLog('done'); 
             socket.close();  
+            document.getElementById("dn").innerText="Download now";
             document.getElementById("dn").classList.remove('hidden')
           }
         }catch(e){

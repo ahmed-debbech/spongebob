@@ -15,7 +15,7 @@ public class Download {
 
         for(Data.Track tr : trackList){
             try {
-                ProcessBuilder pb = new ProcessBuilder("sh", "-c", "./scdl_bin download " + tr.id.toString());
+                ProcessBuilder pb = new ProcessBuilder("sh", "-c", "./scdl_bin -p download -b " + tr.permalink_url.toString());
                 pb.inheritIO();
                 Process process = pb.start();
                 process.waitFor();

@@ -17,6 +17,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PlaylistValidator {
 
@@ -41,6 +43,7 @@ public class PlaylistValidator {
                 Data obj = gson.fromJson(gson.toJson(hy.data), Data.class);
                 if(obj.tracks != null) {
                     tracklist = obj.tracks;
+                    tracklist = getRemainingTracksData(tracklist, html);
                     CurrentPlaylist.getInstance().setPlaylistUrl(playlistUrl);
                     CurrentPlaylist.getInstance().setTrackList(tracklist);
                     return tracklist;
@@ -51,6 +54,53 @@ public class PlaylistValidator {
         throw new Exception("found no tracklist in playlist");
     }
 
+    private String getClientId(String html) throws Exception{
+
+        Exception e = new Exception("SERVER ERROR: could not determine client_id while getting remaining tracks data");
+        Document doc = Jsoup.parse(html);
+        Elements scripts = doc.select("script[src]");
+        Element lastScript = scripts.last();
+        if(lastScript == null) throw e;
+        String url = lastScript.attr("src");
+        if(url == null || url.isEmpty()) throw e;
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw e;
+
+            String text = response.body().string();
+            Pattern p = Pattern.compile(",client_id:\"([^\"]*?.[^\"]*?)\"");
+            Matcher m = p.matcher(text);
+            if(!m.find()) throw e;
+            String match  = text.substring(m.start(), m.end()-1).split("\"")[1];
+            return match;
+        }
+    }
+    private List<Data.Track> getRemainingTracksData(List<Data.Track> trackList, String html) throws Exception{
+        String client_id = getClientId(html);
+
+        for(int i = 0; i <= trackList.size()-1; i++) {
+
+            if(trackList.get(i).permalink_url!=null) continue;
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url("https://api-v2.soundcloud.com/tracks/" + trackList.get(i).id + "?client_id=" + client_id)
+                .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful()) throw new Exception("soundcloud returned not 200 when retrieving a track data "+ response.body().string() );
+
+                Gson g = new Gson();
+                Data.Track tr = g.fromJson(response.body().string(), Data.Track.class);
+                trackList.set(i, tr);
+            }
+        }
+        return trackList;
+    }
 
     private String getHydrationTag(String html) throws  Exception{
         Document doc = Jsoup.parse(html);
