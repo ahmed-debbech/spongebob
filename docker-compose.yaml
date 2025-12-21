@@ -23,9 +23,22 @@ services:
       - spongebob-net
     volumes:
       - ./scdownloads:/app/scdownloads
+      - ./downloaded_playlists:/app/downloaded_playlists
     ports:
       - 20001:20001 
-      
+
+
+  database:
+    image: redis:7.4-alpine
+    restart: always
+    command: redis-server --save 20 1 --loglevel warning
+    ports:
+      - 6379:6379
+    networks:
+      - spongebob-net
+    volumes:
+      - ./redis_data:/data
+
 networks:
   spongebob-net:
     driver: bridge

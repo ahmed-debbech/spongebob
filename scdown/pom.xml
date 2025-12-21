@@ -17,6 +17,16 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.22.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+        <dependency>
             <groupId>io.javalin</groupId>
             <artifactId>javalin</artifactId>
             <version>6.7.0</version>

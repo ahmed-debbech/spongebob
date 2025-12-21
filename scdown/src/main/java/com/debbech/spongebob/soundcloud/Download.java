@@ -1,5 +1,8 @@
 package com.debbech.spongebob.soundcloud;
 
+import com.debbech.spongebob.model.StoredTrack;
+import com.debbech.spongebob.model.TrackStatus;
+import com.debbech.spongebob.service.Library;
 import com.debbech.spongebob.websocket.WsServer;
 
 import java.io.File;
@@ -83,6 +86,50 @@ public class Download {
         WsServer.getInstance().adminBroadcast("Download ready!");
 
         WsServer.getInstance().adminBroadcast("[DONE]");
+    }
+
+    public void startInternally(List<StoredTrack> trackList) throws Exception {
+
+        if(trackList.isEmpty()) return;
+
+        for(StoredTrack tr : trackList){
+            try {
+                ProcessBuilder pb = new ProcessBuilder("sh", "-c", "./scdl_bin -p download_internal -b " + tr.getTrack().permalink_url.toString());
+                //pb.inheritIO();
+                Process process = pb.start();
+                process.waitFor();
+
+                tr.setStatus(TrackStatus.DOWNLOADED);
+                Library.getInstance().add(List.of(tr));
+            } catch (Exception e) {
+                File obj = new File("./download_internal");
+                deleteDirectory(obj);
+                throw new Exception("Error executing command: " + e.getMessage());
+            }
+        }
+
+        SimpleDateFormat sdf
+                = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String now = sdf.format(new Date());
+
+        try{
+            ProcessBuilder pb = new ProcessBuilder("sh", "-c", "zip -r playlist-"+now+".zip download_internal ");
+            pb.inheritIO();
+            Process process = pb.start();
+            process.waitFor();
+        } catch (Exception e) {
+            File obj = new File("./download_internal");
+            deleteDirectory(obj);
+            throw new Exception("could not zip folder: " + e.getMessage());
+        }
+
+        Files.move
+                (Paths.get("playlist-"+now+".zip"),
+                        Paths.get("./downloaded_playlists/playlist-"+now+".zip"));
+
+        File obj = new File("./download_internal");
+        deleteDirectory(obj);
+
     }
 
     private boolean deleteDirectory(File directoryToBeDeleted) {

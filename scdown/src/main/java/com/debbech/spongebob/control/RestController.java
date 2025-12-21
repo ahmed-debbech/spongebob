@@ -2,6 +2,10 @@ package com.debbech.spongebob.control;
 
 import com.debbech.spongebob.Config;
 import com.debbech.spongebob.control.model.SetPlaylistReq;
+import com.debbech.spongebob.model.StoredTrack;
+import com.debbech.spongebob.model.TrackStatus;
+import com.debbech.spongebob.service.Library;
+import com.debbech.spongebob.service.Processor;
 import com.debbech.spongebob.soundcloud.CurrentPlaylist;
 import com.debbech.spongebob.soundcloud.Data;
 import com.debbech.spongebob.soundcloud.Download;
@@ -79,6 +83,11 @@ public class RestController {
 
             PlaylistValidator playlistValidator = new PlaylistValidator();
             List<Data.Track> tracklist = playlistValidator.validate(playlist.playlistUrl);
+
+            for(Data.Track track : tracklist) {
+                StoredTrack ss = new StoredTrack(track, TrackStatus.UNPROCESSED);
+                Library.getInstance().add(List.of(ss));
+            }
 
             String resp = gson.toJson(tracklist);
             ctx.status(200);
