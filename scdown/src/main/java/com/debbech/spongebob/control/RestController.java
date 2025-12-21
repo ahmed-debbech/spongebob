@@ -27,6 +27,7 @@ public class RestController {
         Javalin.create()
                 .post("setPlaylist", this::handleSetPlaylist)
                 .get("downloadPlaylist", this::handleDownloadPlaylist)
+                .get("setThreshold/<value>", this::handleSetThreshold)
                 .start(Config.getInstance().PORT);
 
         Javalin.create(config -> {
@@ -44,6 +45,27 @@ public class RestController {
                 });
             });
         }).start(Config.getInstance().websocket_port);
+    }
+
+    private void handleSetThreshold(Context ctx){
+        log.info("setting new threshold {}", ctx.pathParam("value"));
+        if(ctx.pathParam("value").isEmpty()){
+            log.error("threshold value is not set when calling the api");
+            ctx.status(400);
+            ctx.result("{\"is_set\":false}");
+            return;
+        }
+        try {
+            int newVal = Integer.parseInt(ctx.pathParam("value"));
+            Processor.thresholdToProcess = newVal;
+        }catch (NumberFormatException e){
+            log.error("not a number set in threshold value");
+            ctx.status(400);
+            ctx.result("{\"is_set\":false}");
+            return;
+        }
+        ctx.status(200);
+        ctx.result("{\"is_set\":true}");
     }
 
     private void handleDownloadPlaylist(Context ctx) {
