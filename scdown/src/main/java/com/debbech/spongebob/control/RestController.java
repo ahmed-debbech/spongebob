@@ -86,7 +86,7 @@ public class RestController {
 
             for(Data.Track track : tracklist) {
                 StoredTrack ss = new StoredTrack(track, TrackStatus.UNPROCESSED);
-                Library.getInstance().add(List.of(ss));
+                Library.getInstance().addOnlyNew(List.of(ss));
             }
 
             String resp = gson.toJson(tracklist);

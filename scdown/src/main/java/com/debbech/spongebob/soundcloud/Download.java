@@ -90,44 +90,55 @@ public class Download {
 
     public void startInternally(List<StoredTrack> trackList) throws Exception {
 
+        SimpleDateFormat sdf
+                = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String now = sdf.format(new Date());
+
+        File directory = new File("download_internal/playlist-"+now);
+        directory.mkdir();
+
         if(trackList.isEmpty()) return;
 
         for(StoredTrack tr : trackList){
             try {
-                ProcessBuilder pb = new ProcessBuilder("sh", "-c", "./scdl_bin -p download_internal -b " + tr.getTrack().permalink_url.toString());
-                //pb.inheritIO();
+                ProcessBuilder pb = new ProcessBuilder("sh", "-c", "./scdl_bin -p download_internal/playlist-"+now+" -b " + tr.getTrack().permalink_url.toString());
+                pb.inheritIO();
                 Process process = pb.start();
                 process.waitFor();
 
                 tr.setStatus(TrackStatus.DOWNLOADED);
                 Library.getInstance().add(List.of(tr));
             } catch (Exception e) {
-                File obj = new File("./download_internal");
+                File obj = new File("./download_internal/playlist-"+now);
                 deleteDirectory(obj);
                 throw new Exception("Error executing command: " + e.getMessage());
             }
         }
 
-        SimpleDateFormat sdf
-                = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String now = sdf.format(new Date());
-
-        try{
-            ProcessBuilder pb = new ProcessBuilder("sh", "-c", "zip -r playlist-"+now+".zip download_internal ");
-            pb.inheritIO();
-            Process process = pb.start();
-            process.waitFor();
-        } catch (Exception e) {
-            File obj = new File("./download_internal");
-            deleteDirectory(obj);
-            throw new Exception("could not zip folder: " + e.getMessage());
+        List<Path> files;
+        try (var stream = Files.list(Paths.get("./download_internal/playlist-"+now))) {
+            files = stream
+                    .filter(Files::isRegularFile)
+                    .toList();
         }
 
-        Files.move
-                (Paths.get("playlist-"+now+".zip"),
-                        Paths.get("./downloaded_playlists/playlist-"+now+".zip"));
+        for (Path oggFile : files){
+            try {
+                new ProcessBuilder(
+                        "sh",
+                        "-c",
+                        "ffmpeg -i \""+oggFile+"\" -map_metadata 0 -vn -c:a libmp3lame -q:a 0 \""+oggFile+".mp3\""
+                ).start().waitFor();
 
-        File obj = new File("./download_internal");
+                Files.delete(oggFile);
+            }catch (Exception e){
+                File obj = new File("./download_internal/playlist-"+now);
+                deleteDirectory(obj);
+                throw new Exception("Error executing command for converting ogg -> mp3: " + e.getMessage());
+            }
+        }
+
+        File obj = new File("./download_internal/playlist-"+now);
         deleteDirectory(obj);
 
     }

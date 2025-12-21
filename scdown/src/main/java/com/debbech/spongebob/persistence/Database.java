@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Database {
 
@@ -51,7 +52,7 @@ public class Database {
         openSocket();
         Iterable<String> keys = redisClient.getKeys().getKeysByPattern("track:*");
 
-        Map<String, StoredTrack> result = new HashMap();
+        Map<String, StoredTrack> result = new ConcurrentHashMap<>();
         for (String key : keys) {
             StoredTrack st = redisClient.<StoredTrack>getBucket(key).get();
             if (st != null) {

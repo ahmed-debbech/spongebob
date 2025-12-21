@@ -23,7 +23,7 @@ services:
       - spongebob-net
     volumes:
       - ./scdownloads:/app/scdownloads
-      - ./downloaded_playlists:/app/downloaded_playlists
+      - ./download_internal:/app/download_internal
     ports:
       - 20001:20001 
 

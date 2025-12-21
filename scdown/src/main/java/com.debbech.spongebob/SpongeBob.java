@@ -1,6 +1,7 @@
 package com.debbech.spongebob;
 
 import com.debbech.spongebob.control.RestController;
+import com.debbech.spongebob.service.Library;
 import com.debbech.spongebob.service.Processor;
 import com.debbech.spongebob.service.Scheduler;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class SpongeBob {
         RestController authRestController = new RestController();
         authRestController.startRestServer();
 
-        Processor processor = new Processor();
+        Library.getInstance();
         new Scheduler();
     }
 

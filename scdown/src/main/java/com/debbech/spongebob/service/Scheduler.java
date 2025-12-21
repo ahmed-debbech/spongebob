@@ -56,6 +56,7 @@ public class Scheduler {
             }
         }));
     }
+
     @DisallowConcurrentExecution
     public static class ProcessDownloadedTracks implements Job {
 

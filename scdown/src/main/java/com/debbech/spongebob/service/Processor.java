@@ -16,18 +16,21 @@ public class Processor {
 
     private static Logger log = LoggerFactory.getLogger(Processor.class);
 
-    public static int thresholdToProcess = 10;
+    public static int thresholdToProcess = 4;
 
     public static boolean process(){
-        log.info("processing job is running...");
+        log.info("[PROCESS_JOB]");
         try {
             List<StoredTrack> newTracklist = Library.getInstance().getDownloadedTracks();
-            log.info("you have {} tracks to process", newTracklist.size());
-            if(newTracklist.size() < thresholdToProcess) return true;
+            log.info("you have {} tracks downloaded ready to process", newTracklist.size());
+            if(newTracklist.size() < thresholdToProcess) {
+                log.info("skipping...");
+                return true;
+            }
 
             //fire request to queue
             //mark them as IN_REVIEW
-            Library.getInstance().add(newTracklist.subList(0, thresholdToProcess-1).stream().map((e)->{ e.setStatus(TrackStatus.IN_REVIEW); return e;}).collect(Collectors.toList()));
+            Library.getInstance().add(newTracklist.subList(0, thresholdToProcess).stream().map((e)->{ e.setStatus(TrackStatus.IN_REVIEW); return e;}).collect(Collectors.toList()));
         } catch (Exception e) {
             log.error("could not process the new tracklist because {}", e.getMessage());
             return false;
@@ -37,14 +40,13 @@ public class Processor {
 
     public static void download(){
 
-        log.info("download job is running...");
+        log.info("[DOWNLOAD_JOB]");
         List<StoredTrack> newTracklist = Library.getInstance().getUnprocessedTracks();
         log.info("you have {} new unprocessed tracks to be downloaded", newTracklist.size());
         try {
             new Download().startInternally(newTracklist);
         } catch (Exception e) {
             log.error("could not download newly added tracks because {}", e.getMessage());
-            throw new RuntimeException(e);
         }
 
     }

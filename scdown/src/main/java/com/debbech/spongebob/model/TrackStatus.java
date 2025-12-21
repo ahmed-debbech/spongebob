@@ -7,5 +7,6 @@ public enum TrackStatus {
     FAILED, //failed to be processed for some reason
     COPYRIGHTED,
     NOT_COPYRIGHTED,
-    UNKNOWN // when a track is done processing and couldn't decide whether we should classify it as copyrighted or not
+    UNKNOWN, // when a track is done processing and couldn't decide whether we should classify it as copyrighted or not
+    LOST // when it fails for some reason
 }

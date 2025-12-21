@@ -27,8 +27,18 @@ public class Library {
         refreshInMemoryLibrary();
     }
 
+    public void addOnlyNew(List<StoredTrack> tracksToBeAdded) {
+        for(StoredTrack st : tracksToBeAdded) {
+            StoredTrack s = collectionInDB.get("track:"+st.getTrack().id);
+            if(s == null) {
+                new Database().storeTrack(st);
+            }
+        }
+        refreshInMemoryLibrary();
+    }
+
     public void remove(StoredTrack track) {
-        StoredTrack st = new Database().getStoredTrack(track.getTrack().id.toString());
+        StoredTrack st = new Database().getStoredTrack("track:"+track.getTrack().id.toString());
         if(st == null){
             log.warn("could not remove object {} because it does not exists", track.getTrack().id.toString());
             return;
@@ -37,7 +47,7 @@ public class Library {
             log.info("could not remove object {} because it is already processes", track.getTrack().id.toString());
             return;
         }
-        new Database().removeStoredTrack(track.getTrack().id.toString());
+        new Database().removeStoredTrack("track:"+track.getTrack().id.toString());
         refreshInMemoryLibrary();
     }
 
@@ -74,6 +84,8 @@ public class Library {
 
     private static void refreshInMemoryLibrary() {
         collectionInDB = new Database().getAllStoredTracks();
+        log.info("==> DOWNLOADED {}", collectionInDB.values().stream().filter((e) -> e.getStatus().name().equals(TrackStatus.DOWNLOADED.name())).count() );
+        log.info("==> UNPROCESSED {}", collectionInDB.values().stream().filter((e) -> e.getStatus().name().equals(TrackStatus.UNPROCESSED.name())).count() );
     }
 
     public static Library getInstance(){
