@@ -66,4 +66,17 @@ public class Database {
         RBucket<StoredTrack> bucket = redisClient.getBucket(id);
         bucket.delete();
     }
+
+    public long getCurrentPlaylistNumber(){
+        openSocket();
+        RAtomicLong atomic = redisClient.getAtomicLong("currentPlaylistNumber");
+        long value = atomic.get();
+        return value;
+    }
+
+    public void incrementCurrentPlaylistNumber(){
+        openSocket();
+        RAtomicLong atomic = redisClient.getAtomicLong("currentPlaylistNumber");
+        atomic.incrementAndGet();
+    }
 }

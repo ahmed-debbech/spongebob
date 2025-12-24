@@ -28,6 +28,32 @@ services:
       - 20001:20001 
 
 
+  main:
+    build: ./main
+    image: spongebob_main:latest
+    container_name: main
+    volumes:
+      - ./download_internal:/app/download_internal #modify Config.java with path in container
+      - ./output:/app/output #modify Config.java with path in container
+    networks:
+      - spongebob-net
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  rabbitmq:
+    image: rabbitmq:4.1.6-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - spongebob-net
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   database:
     image: redis:7.4-alpine
     restart: always

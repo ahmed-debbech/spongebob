@@ -31,7 +31,7 @@ public class FFMPEGManager {
     }
     private static void execute(String command) throws Exception {
         try {
-            ProcessBuilder pb = new ProcessBuilder("bash", "-c", command);
+            ProcessBuilder pb = new ProcessBuilder("sh", "-c", command);
             pb.inheritIO(); // show ffmpeg output directly
             Process process = pb.start();
             process.waitFor();

@@ -88,35 +88,32 @@ public class Download {
         WsServer.getInstance().adminBroadcast("[DONE]");
     }
 
-    public void startInternally(List<StoredTrack> trackList) throws Exception {
+    public void startInternally(List<StoredTrack> trackList, String playlistName) throws Exception {
 
-        SimpleDateFormat sdf
-                = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String now = sdf.format(new Date());
+        String plst_name = playlistName;
 
-        File directory = new File("download_internal/playlist-"+now);
+        File directory = new File("download_internal/playlist-"+plst_name);
         directory.mkdir();
 
         if(trackList.isEmpty()) return;
 
         for(StoredTrack tr : trackList){
             try {
-                ProcessBuilder pb = new ProcessBuilder("sh", "-c", "./scdl_bin -p download_internal/playlist-"+now+" -b " + tr.getTrack().permalink_url.toString());
+                ProcessBuilder pb = new ProcessBuilder("sh", "-c", "./scdl_bin -p download_internal/playlist-"+plst_name+" -b " + tr.getTrack().permalink_url.toString());
                 pb.inheritIO();
                 Process process = pb.start();
                 process.waitFor();
 
                 tr.setStatus(TrackStatus.DOWNLOADED);
+                tr.setPlaylistDirName("playlist-" + plst_name);
                 Library.getInstance().add(List.of(tr));
             } catch (Exception e) {
-                File obj = new File("./download_internal/playlist-"+now);
-                deleteDirectory(obj);
                 throw new Exception("Error executing command: " + e.getMessage());
             }
         }
 
         List<Path> files;
-        try (var stream = Files.list(Paths.get("./download_internal/playlist-"+now))) {
+        try (var stream = Files.list(Paths.get("./download_internal/playlist-"+plst_name))) {
             files = stream
                     .filter(Files::isRegularFile)
                     .toList();
@@ -132,14 +129,9 @@ public class Download {
 
                 Files.delete(oggFile);
             }catch (Exception e){
-                File obj = new File("./download_internal/playlist-"+now);
-                deleteDirectory(obj);
                 throw new Exception("Error executing command for converting ogg -> mp3: " + e.getMessage());
             }
         }
-
-        File obj = new File("./download_internal/playlist-"+now);
-        deleteDirectory(obj);
 
     }
 

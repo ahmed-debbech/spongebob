@@ -2,6 +2,8 @@ package com.debbech.spongebob.service;
 
 import com.debbech.spongebob.model.StoredTrack;
 import com.debbech.spongebob.model.TrackStatus;
+import com.debbech.spongebob.queue.OutputQueues;
+import com.debbech.spongebob.queue.messages.ProcessRequestMessage;
 import com.debbech.spongebob.soundcloud.Data;
 import com.debbech.spongebob.soundcloud.Download;
 import org.slf4j.Logger;
@@ -16,7 +18,7 @@ public class Processor {
 
     private static Logger log = LoggerFactory.getLogger(Processor.class);
 
-    public static int thresholdToProcess = 4;
+    public static int thresholdToProcess = 3;
 
     public static boolean process(){
         log.info("[PROCESS_JOB]");
@@ -28,8 +30,11 @@ public class Processor {
                 return true;
             }
 
-            //fire request to queue
-            //mark them as IN_REVIEW
+            PlaylistNamer.incCurrentPlaylist();
+            ProcessRequestMessage p = new ProcessRequestMessage();
+            p.playlistDirectoryName = newTracklist.get(0).getPlaylistDirName();
+            OutputQueues.publish_out_proc_qu(p.toJson());
+
             Library.getInstance().add(newTracklist.subList(0, thresholdToProcess).stream().map((e)->{ e.setStatus(TrackStatus.IN_REVIEW); return e;}).collect(Collectors.toList()));
         } catch (Exception e) {
             log.error("could not process the new tracklist because {}", e.getMessage());
@@ -42,9 +47,11 @@ public class Processor {
 
         log.info("[DOWNLOAD_JOB]");
         List<StoredTrack> newTracklist = Library.getInstance().getUnprocessedTracks();
+        if(newTracklist.isEmpty()) return;
         log.info("you have {} new unprocessed tracks to be downloaded", newTracklist.size());
         try {
-            new Download().startInternally(newTracklist);
+            String plname = String.valueOf(PlaylistNamer.getCurrentPlaylist());
+            new Download().startInternally(newTracklist, plname);
         } catch (Exception e) {
             log.error("could not download newly added tracks because {}", e.getMessage());
         }

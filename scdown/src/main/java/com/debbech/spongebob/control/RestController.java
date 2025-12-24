@@ -107,7 +107,7 @@ public class RestController {
             List<Data.Track> tracklist = playlistValidator.validate(playlist.playlistUrl);
 
             for(Data.Track track : tracklist) {
-                StoredTrack ss = new StoredTrack(track, TrackStatus.UNPROCESSED);
+                StoredTrack ss = new StoredTrack(track, TrackStatus.UNPROCESSED, "");
                 Library.getInstance().addOnlyNew(List.of(ss));
             }
 
