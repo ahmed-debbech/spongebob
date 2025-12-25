@@ -1,4 +1,4 @@
-package com.debbech.spongebob.queue.messages;
+package com.debbech.spongebob.model;
 
 import com.google.gson.Gson;
 

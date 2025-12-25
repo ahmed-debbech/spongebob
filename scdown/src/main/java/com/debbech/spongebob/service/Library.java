@@ -88,6 +88,9 @@ public class Library {
         log.info("==> UNPROCESSED {}", collectionInDB.values().stream().filter((e) -> e.getStatus().name().equals(TrackStatus.UNPROCESSED.name())).count() );
     }
 
+    public List<StoredTrack> getAllStoredTracks(){
+        return collectionInDB.values().stream().toList();
+    }
     public static Library getInstance(){
         if(instance == null){
             refreshInMemoryLibrary();

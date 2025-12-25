@@ -1,90 +1,172 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SpongeBob</title>
   <style>
-    body{
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      margin:0;
-      padding:40px;
-      background:#0f0f0f;
-      color:#eee;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-    }
-    h2{color:#ff8c32;margin-bottom:20px;font-size:28px}
-
-    .container{
-      width:100%;
-      max-width:700px;
-      display:flex;
-      flex-direction:column;
-      gap:14px;
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      margin: 0;
+      padding: 40px;
+      background: #0f0f0f;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .row{
-      display:flex;
-      gap:10px;
-      width:100%;
-    }
-    input[type=text]{
-      padding:12px;
-      flex:1;
-      background:#1a1a1a;
-      border:1px solid #333;
-      color:#eee;
-      border-radius:8px;
-    }
-    button{
-      padding:12px 18px;
-      border-radius:8px;
-      border:none;
-      background:#ff8c32;
-      color:#fff;
-      font-weight:600;
-      cursor:pointer;
-      transition:0.2s;
-    }
-    button:hover{background:#ffa65c}
-
-    .tracks{
-      border:1px solid #333;
-      border-radius:10px;
-      overflow:hidden;
-      background:#1a1a1a;
-    }
-    .tracks-header{
-      padding:12px;
-      border-bottom:1px solid #333;
-      background:#161616;
-      font-weight:bold;
-    }
-    .tracks .list{height:220px;overflow:auto}
-
-    table{width:100%;border-collapse:collapse;color:#eee}
-    th,td{padding:10px;border-bottom:1px solid #222;text-align:left}
-    tr:hover{background:#181818}
-
-    textarea{
-      width:100%;
-      height:160px;
-      padding:10px;
-      background:#1a1a1a;
-      border:1px solid #333;
-      border-radius:8px;
-      color:#eee;
-      font-family:monospace;
-      resize:vertical;
+    h2 {
+      color: #ff8c32;
+      margin-bottom: 20px;
+      font-size: 28px
     }
 
-    .hidden{display:none}
+    .container {
+      width: 100%;
+      max-width: 700px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    input[type=text] {
+      padding: 12px;
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #eee;
+      border-radius: 8px;
+    }
+
+    button {
+      padding: 12px 18px;
+      border-radius: 8px;
+      border: none;
+      background: #ff8c32;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #ffa65c
+    }
+
+    .tracks {
+      border: 1px solid #333;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #1a1a1a;
+    }
+
+    .tracks-header {
+      padding: 12px;
+      border-bottom: 1px solid #333;
+      background: #161616;
+      font-weight: bold;
+    }
+
+    .tracks .list {
+      height: 70%;
+      overflow: auto
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #eee
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #222;
+      text-align: left
+    }
+
+    tr:hover {
+      background: #2a2929
+    }
+
+    textarea {
+      width: 100%;
+      height: 160px;
+      padding: 10px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #eee;
+      font-family: monospace;
+      resize: vertical;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      border-radius: 999px;
+      color: #fff;
+      white-space: nowrap;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ===== STATES ===== */
+
+    .status-downloaded {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      box-shadow: 0 0 10px rgba(0, 160, 255, 0.6);
+    }
+
+    .status-in-review {
+      background: linear-gradient(135deg, #f6d365, #fda085);
+      box-shadow: 0 0 10px rgba(255, 180, 80, 0.6);
+    }
+
+    .status-unprocessed {
+      background: linear-gradient(135deg, #9e9e9e, #6b6b6b);
+      box-shadow: 0 0 8px rgba(150, 150, 150, 0.6);
+    }
+
+    .status-copyrighted {
+      background: linear-gradient(135deg, #ff4d4d, #b30000);
+      box-shadow: 0 0 10px rgba(255, 60, 60, 0.7);
+    }
+
+    .status-not-copyrighted {
+      background: linear-gradient(135deg, #22c55e, #15803d);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+    }
+
+    .status-unknown {
+      background: linear-gradient(135deg, #64748b, #334155);
+      box-shadow: 0 0 8px rgba(100, 116, 139, 0.6);
+    }
+
+    .status-lost {
+      background: linear-gradient(135deg, #3f3f46, #18181b);
+      box-shadow: 0 0 8px rgba(50, 50, 50, 0.7);
+    }
+
+    .hidden {
+      display: none
+    }
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 </head>
+
 <body>
   <h2>Set your playlist</h2>
   <div class="container">
@@ -95,11 +177,15 @@
     </div>
 
     <div class="tracks" id="tracksCard">
-      <div class="tracks-header">Tracks</div>
+      <div class="tracks-header">Your Library</div>
       <div class="list" id="tracksList">
         <table aria-label="playlist tracks">
           <thead>
-            <tr><th style="width:72px">#</th><th>Title</th> <th>Link</th></tr>
+            <tr>
+              <th style="width:72px">#</th>
+              <th>Title</th>
+              <th>Status</th>
+            </tr>
           </thead>
           <tbody id="tracksTbody"></tbody>
         </table>
@@ -112,141 +198,122 @@
       <textarea id="log" readonly></textarea>
     </div>
 
-    <button onclick="downloadNow()" id="dn" class="hidden" style="width:100%;margin-top:6px; background-color: green;">Download Now!</button>
+    <button onclick="downloadNow()" id="dn" class="hidden"
+      style="width:100%;margin-top:6px; background-color: green;">Download Now!</button>
 
   </div>
 
   <script>
-    const playlistInput = document.getElementById('playlistInput');
-    const setBtn = document.getElementById('setBtn');
-    const tracksTbody = document.getElementById('tracksTbody');
-    const downloadAll = document.getElementById('downloadAll');
-    const logArea = document.getElementById('logArea');
-    const logEl = document.getElementById('log');
+    let playlistInput = document.getElementById('playlistInput');
+    const wsUrl = 'ws://' + location.hostname + ':20001/chat';
 
     let socket = null;
+    try {
+      socket = new WebSocket(wsUrl);
+    } catch (err) { alert('WebSocket error: ' + err.message); }
 
-    function downloadNow(){
-      document.getElementById("dn").innerText="will begin shortly...";
-      setTimeout(()=>{
-        document.getElementById("dn").classList.add("hidden")
-      }, 4000)
-      window.open('/getFile', '_blank')
-    }
+    socket.addEventListener('open', () => {
+      console.log("socket is opened")
+    });
 
-    function populateTable(list){
+    socket.addEventListener('message', (ev) => {
+      let data = ev.data;
+      try {
+        data = JSON.parse(data)
+        playlistInput.value = data.playlistLink
+        populateTable(data.library)
+      } catch (e) {
+        alert("error in WS when exchanging msgs: " + data);
+        socket.close();
+      }
+    });
+
+    socket.addEventListener('close', () => {
+      console.log("socket closed")
+    });
+
+    socket.addEventListener('error', () => {
+      alert('Socket error');
+    });
+
+  </script>
+
+  <script>
+    const setBtn = document.getElementById('setBtn');
+    const tracksTbody = document.getElementById('tracksTbody');
+
+
+    function populateTable(list) {
       console.log(list)
       tracksTbody.innerHTML = '';
-      list.forEach((t,i)=>{
-        const tr = document.createElement('tr');
-        const tdIdx = document.createElement('td'); tdIdx.textContent = i+1;
-        const tdTitle = document.createElement('td'); tdTitle.innerText = t.title;
-        const tdLink = document.createElement('td'); tdLink.innerHTML = "<a href='"+t.permalink_url+"'>See</a>";
+      list.forEach((t, i) => {
+        let tr = document.createElement('tr');
+        let tdIdx = document.createElement('td'); tdIdx.innerHTML = "<a href='" + t.track.permalink_url + "'>" + (i + 1) + "</a>";
+        let tdTitle = document.createElement('td'); tdTitle.innerText = t.track.title;
+        let tdLink = ""
+
+        switch (t.status) {
+          case "DOWNLOADED":
+            tdLink = document.createElement('td'); tdLink.innerHTML = "<span class='tag status-downloaded'>Downloaded</span>"
+            break;
+
+          case "IN_REVIEW":
+            tdLink = document.createElement('td'); tdLink.innerHTML = "<span class='tag status-in-review'>In Review</span>"
+            break;
+
+          case "UNPROCESSED":
+            tdLink = document.createElement('td'); tdLink.innerHTML = "<span class='tag status-unprocessed'>Just Added</span>"
+            break;
+
+          case "COPYRIGHTED":
+            tdLink = document.createElement('td'); tdLink.innerHTML = "<span class='tag status-copyrighted'>Copyrighted</span>"
+            break;
+
+          case "NOT_COPYRIGHTED":
+            tdLink = document.createElement('td'); tdLink.innerHTML = "<span class='tag status-not-copyrighted'>Clean</span>"
+            break;
+
+          case "UNKNOWN":
+            tdLink = document.createElement('td'); tdLink.innerHTML = "<span class='tag status-unknown'>Unsure</span>"
+            break;
+
+          case "LOST":
+            tdLink = document.createElement('td'); tdLink.innerHTML = "<span class='tag status-lost'>Lost</span>"
+            break;
+        }
 
         tr.appendChild(tdIdx); tr.appendChild(tdTitle); tr.appendChild(tdLink);
         tracksTbody.appendChild(tr);
       });
     }
 
-    setBtn.addEventListener('click', ()=>{
+    setBtn.addEventListener('click', () => {
       setBtn.innerText = "Setting... please wait"
       setBtn.disabled = true
       $.ajax({
-          contentType: 'application/json',
-          data: JSON.stringify({
-              "playlistUrl" : playlistInput.value
-          }),
-          dataType: 'json',
-          success: function(data){
-              setBtn.disabled = false
-              console.log(data.tracklist)
-              populateTable(data.tracklist);
-              setBtn.innerText = "Set"
-          },
-          error: function(err){
-              setBtn.disabled = false
-              let g = JSON.parse(err.responseText)
-              alert("ERROR: "+ g.reason.because)
-              setBtn.innerText = "Set"
+        contentType: 'application/json',
+        data: JSON.stringify({
+          "playlistUrl": playlistInput.value
+        }),
+        dataType: 'json',
+        success: function (data) {
+          setBtn.disabled = false
+          setBtn.innerText = "Set"
+        },
+        error: function (err) {
+          setBtn.disabled = false
+          let g = JSON.parse(err.responseText)
+          alert("ERROR: " + g.reason.because)
+          setBtn.innerText = "Set"
 
-          },
-          processData: false,
-          type: 'POST',
-          url: '/setPlaylist'
+        },
+        processData: false,
+        type: 'POST',
+        url: '/setPlaylist'
       });
-    });
-
-    function appendLog(line){
-      // fixed quoting for newline character
-      logEl.value += line + '\n';
-      logEl.scrollTop = logEl.scrollHeight;
-    }
-
-    downloadAll.addEventListener('click', ()=>{
-
-      $.ajax({
-          contentType: 'application/json',
-          dataType: 'json',
-          success: function(dataa){
-
-            if(dataa.error == true) {alert("ERROR happend even when 200")}
-
-          
-          },
-          error: function(err){
-              setBtn.disabled = false
-              let g = JSON.parse(err.responseText)
-              alert("ERROR: "+ g.reason.because)
-          },
-          processData: false,
-          type: 'GET',
-          url: '/downloadPlaylist'
-      });
-
-      const wsUrl = 'ws://'+ location.hostname+':20001/chat';
-      logArea.classList.remove('hidden');
-      logEl.value = '';
-      appendLog('Connecting to ' + wsUrl + ' ...');
-
-      try{
-        socket = new WebSocket(wsUrl);
-      }catch(err){ appendLog('WebSocket error: ' + err.message); return }
-
-      downloadAll.disabled = true;
-
-      socket.addEventListener('open', ()=>{
-        appendLog('Socket opened...');
-      });
-
-      socket.addEventListener('message', (ev)=>{
-        let data = ev.data;
-        try{
-          appendLog(data);
-          if(data == "[DONE]"){ 
-            appendLog('done'); 
-            socket.close();  
-            document.getElementById("dn").innerText="Download now";
-            document.getElementById("dn").classList.remove('hidden')
-          }
-        }catch(e){
-          appendLog(data);
-          socket.close();
-        }
-      });
-
-      socket.addEventListener('close', ()=>{
-        appendLog('Socket closed.');
-        downloadAll.disabled = false;
-      });
-
-      socket.addEventListener('error', ()=>{
-        appendLog('Socket error');
-        downloadAll.disabled = false;
-      });
-
-
     });
 
   </script>
 </body>
+
 </html>

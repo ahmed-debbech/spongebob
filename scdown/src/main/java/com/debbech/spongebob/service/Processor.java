@@ -1,15 +1,16 @@
 package com.debbech.spongebob.service;
 
+import com.debbech.spongebob.model.SerializableStatus;
 import com.debbech.spongebob.model.StoredTrack;
 import com.debbech.spongebob.model.TrackStatus;
 import com.debbech.spongebob.queue.OutputQueues;
-import com.debbech.spongebob.queue.messages.ProcessRequestMessage;
+import com.debbech.spongebob.model.ProcessRequestMessage;
 import com.debbech.spongebob.soundcloud.Data;
 import com.debbech.spongebob.soundcloud.Download;
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,7 @@ public class Processor {
                 return true;
             }
 
-            PlaylistNamer.incCurrentPlaylist();
+            PlaylistService.incCurrentPlaylist();
             ProcessRequestMessage p = new ProcessRequestMessage();
             p.playlistDirectoryName = newTracklist.get(0).getPlaylistDirName();
             OutputQueues.publish_out_proc_qu(p.toJson());
@@ -50,11 +51,21 @@ public class Processor {
         if(newTracklist.isEmpty()) return;
         log.info("you have {} new unprocessed tracks to be downloaded", newTracklist.size());
         try {
-            String plname = String.valueOf(PlaylistNamer.getCurrentPlaylist());
+            String plname = String.valueOf(PlaylistService.getCurrentPlaylist());
             new Download().startInternally(newTracklist, plname);
         } catch (Exception e) {
             log.error("could not download newly added tracks because {}", e.getMessage());
         }
 
+    }
+
+    public static String getStatus(){
+        log.info("getting status for current playlist link and library data");
+        SerializableStatus ss = new SerializableStatus();
+        String currentPlLink = PlaylistService.getPlaylistLink();
+        ss.playlistLink = currentPlLink;
+        ss.library = Library.getInstance().getAllStoredTracks();
+        Gson g = new Gson();
+        return g.toJson(ss, SerializableStatus.class);
     }
 }

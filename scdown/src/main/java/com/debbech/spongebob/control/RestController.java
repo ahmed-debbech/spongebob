@@ -5,6 +5,7 @@ import com.debbech.spongebob.control.model.SetPlaylistReq;
 import com.debbech.spongebob.model.StoredTrack;
 import com.debbech.spongebob.model.TrackStatus;
 import com.debbech.spongebob.service.Library;
+import com.debbech.spongebob.service.PlaylistService;
 import com.debbech.spongebob.service.Processor;
 import com.debbech.spongebob.soundcloud.CurrentPlaylist;
 import com.debbech.spongebob.soundcloud.Data;
@@ -111,9 +112,9 @@ public class RestController {
                 Library.getInstance().addOnlyNew(List.of(ss));
             }
 
-            String resp = gson.toJson(tracklist);
+            PlaylistService.storePlaylistLink(playlist.playlistUrl);
             ctx.status(200);
-            ctx.result(resp);
+            ctx.result("{\"is_valid\":true}");
         } catch (Exception e) {
             log.error("error occured while setting playlist: {}", e.getMessage());
             ctx.status(400);

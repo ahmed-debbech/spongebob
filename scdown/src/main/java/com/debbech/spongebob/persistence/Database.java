@@ -79,4 +79,16 @@ public class Database {
         RAtomicLong atomic = redisClient.getAtomicLong("currentPlaylistNumber");
         atomic.incrementAndGet();
     }
+
+    public void setCurrentPlaylistLink(String link) {
+        openSocket();
+        RBucket<String> bucket = redisClient.getBucket("playlist_link");
+        bucket.set(link);
+    }
+
+    public String getCurrentPlaylistLink() {
+        openSocket();
+        RBucket<String> bucket = redisClient.getBucket("playlist_link");
+        return bucket.get();
+    }
 }
