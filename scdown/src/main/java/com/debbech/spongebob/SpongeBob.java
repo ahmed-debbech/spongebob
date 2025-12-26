@@ -2,7 +2,6 @@ package com.debbech.spongebob;
 
 import com.debbech.spongebob.control.RestController;
 import com.debbech.spongebob.service.Library;
-import com.debbech.spongebob.service.Processor;
 import com.debbech.spongebob.service.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
