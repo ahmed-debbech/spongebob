@@ -14,6 +14,9 @@ public class Download {
 
     public void start(List<Data.Track> trackList) throws Exception {
 
+        if(! (new File("/path/directory").mkdirs()){
+            throw new Exception("could not create ./download to hold tracks");
+        }
         for(Data.Track tr : trackList){
             try {
                 ProcessBuilder pb = new ProcessBuilder("sh", "-c", "./scdl_bin -p download -b " + tr.permalink_url.toString());
