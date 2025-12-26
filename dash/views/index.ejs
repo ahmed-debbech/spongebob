@@ -204,6 +204,7 @@
   </div>
 
   <script>
+    let holdLastContent = ""
     let playlistInput = document.getElementById('playlistInput');
     const wsUrl = 'ws://' + location.hostname + ':20001/chat';
 
@@ -219,8 +220,10 @@
     socket.addEventListener('message', (ev) => {
       let data = ev.data;
       try {
+        if(holdLastContent == data) return;
+        holdLastContent = data
         data = JSON.parse(data)
-        playlistInput.value = data.playlistLink
+        playlistInput.value = data.playlistLink == undefined ? '' : data.playlistLink
         populateTable(data.library)
       } catch (e) {
         alert("error in WS when exchanging msgs: " + data);

@@ -1,6 +1,7 @@
 package com.debbech.spongebob.websocket;
 
 import com.debbech.spongebob.service.Processor;
+import com.debbech.spongebob.service.Scheduler;
 import io.javalin.websocket.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -43,9 +44,8 @@ public class WsServer {
 
     }
 
-    public void adminBroadcast(String msg){
+    public static void adminBroadcast(String msg){
         synchronized(clients){
-            log.info("new message sent by admin");
             clients.keySet().stream().filter(ctx -> ctx.session.isOpen()).forEach(session -> {
                 session.send(msg);
             });
@@ -59,7 +59,7 @@ public class WsServer {
             Random r= new Random();
             int i = r.nextInt(99);
             clients.put(ctx, i);
-            adminBroadcast(Processor.getStatus());
+            Scheduler.addNewJob("client", "client");
         }else{
             ctx.closeSession();
         }
@@ -69,5 +69,6 @@ public class WsServer {
         // Remove session from the connected sessions set
         log.info("a client disconnected");
         clients.remove(ctx);
+        Scheduler.deleteNewJob("client", "client");
     }
 }

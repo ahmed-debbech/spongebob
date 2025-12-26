@@ -17,6 +17,10 @@ public class Download {
 
     public void start(List<Data.Track> trackList) throws Exception {
 
+        if(! (new File("./download").mkdirs()) ){
+            throw new Exception("could not create internal folder that will hold downloaded tracks");
+        }
+
         for(Data.Track tr : trackList){
             try {
                 ProcessBuilder pb = new ProcessBuilder("sh", "-c", "./scdl_bin -p download -b " + tr.permalink_url.toString());

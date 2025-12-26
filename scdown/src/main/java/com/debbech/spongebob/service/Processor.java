@@ -22,9 +22,9 @@ public class Processor {
     public static int thresholdToProcess = 3;
 
     public static boolean process(){
-        log.info("[PROCESS_JOB]");
         try {
             List<StoredTrack> newTracklist = Library.getInstance().getDownloadedTracks();
+            if(newTracklist.isEmpty()) return true;
             log.info("you have {} tracks downloaded ready to process", newTracklist.size());
             if(newTracklist.size() < thresholdToProcess) {
                 log.info("skipping...");
@@ -46,7 +46,6 @@ public class Processor {
 
     public static void download(){
 
-        log.info("[DOWNLOAD_JOB]");
         List<StoredTrack> newTracklist = Library.getInstance().getUnprocessedTracks();
         if(newTracklist.isEmpty()) return;
         log.info("you have {} new unprocessed tracks to be downloaded", newTracklist.size());
@@ -60,7 +59,6 @@ public class Processor {
     }
 
     public static String getStatus(){
-        log.info("getting status for current playlist link and library data");
         SerializableStatus ss = new SerializableStatus();
         String currentPlLink = PlaylistService.getPlaylistLink();
         ss.playlistLink = currentPlLink;

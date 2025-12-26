@@ -1,5 +1,6 @@
 package com.debbech.spongebob.service;
 
+import com.debbech.spongebob.websocket.WsServer;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -57,6 +58,42 @@ public class Scheduler {
         }));
     }
 
+    public static String addNewJob(String job_name, String group_name){
+        JobDetail job = JobBuilder.newJob(WriteStateToSocket.class)
+                .withIdentity(job_name, group_name)
+                .build();
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity(job_name, group_name )
+                .startNow()
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                        .withIntervalInSeconds(1)
+                        .repeatForever())
+                .build();
+
+        try {
+            org.quartz.Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+            if(!scheduler.checkExists(job.getKey())) {
+                scheduler.scheduleJob(job, trigger);
+            }
+            return job.getKey().toString();
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static void deleteNewJob(String job_name, String job_group){
+        try {
+            org.quartz.Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+            if(scheduler.checkExists(new JobKey(job_name, job_group))) {
+                scheduler.deleteJob(new JobKey(job_name, job_group));
+            }
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @DisallowConcurrentExecution
     public static class ProcessDownloadedTracks implements Job {
 
@@ -71,6 +108,15 @@ public class Scheduler {
         @Override
         public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
             Processor.download();
+        }
+    }
+
+    @DisallowConcurrentExecution
+    public static class WriteStateToSocket implements Job {
+
+        @Override
+        public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+            WsServer.adminBroadcast(Processor.getStatus());
         }
     }
 }

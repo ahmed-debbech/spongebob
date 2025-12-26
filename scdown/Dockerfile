@@ -17,7 +17,6 @@ RUN sed -i 's|dl-cdn.alpinelinux.org|dl-2.alpinelinux.org|g' /etc/apk/repositori
  && apk add --no-cache zip
 
 RUN mkdir download_internal
-RUN mkdir download
 COPY scdl_bin .
 COPY --from=build /app/target/*-with-dependencies.jar app.jar
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
