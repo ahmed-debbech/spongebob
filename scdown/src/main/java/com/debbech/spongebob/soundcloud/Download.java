@@ -14,7 +14,7 @@ public class Download {
 
     public void start(List<Data.Track> trackList) throws Exception {
 
-        if(! (new File("/path/directory").mkdirs()) ){
+        if(! (new File("./download").mkdirs()) ){
             throw new Exception("could not create ./download to hold tracks");
         }
         for(Data.Track tr : trackList){
