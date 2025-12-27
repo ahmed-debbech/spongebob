@@ -65,6 +65,18 @@ services:
     volumes:
       - ./redis_data:/data
 
+  uploader:
+    build: ./uploader
+    image: spongebob_uploader:latest
+    container_name: uploader
+    networks:
+      - spongebob-net
+    ports:
+      - 7070:7070
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+        
 networks:
   spongebob-net:
     driver: bridge

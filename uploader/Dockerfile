@@ -9,5 +9,6 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jdk-alpine
 WORKDIR /app
 COPY google.json .
+COPY upload_bin .
 COPY --from=build /app/target/*-with-dependencies.jar app.jar
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
