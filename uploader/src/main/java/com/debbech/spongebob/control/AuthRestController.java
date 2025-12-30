@@ -1,5 +1,6 @@
 package com.debbech.spongebob.control;
 
+import com.debbech.spongebob.Config;
 import com.debbech.spongebob.youtube.TokenResp;
 import com.debbech.spongebob.youtube.YoutubeCore;
 import io.javalin.Javalin;
@@ -14,7 +15,7 @@ public class AuthRestController {
     public void startAuthRestServer(){
         Javalin.create()
                 .get("oauth", this::handleOauthCode)
-                .start(7070);
+                .start(Config.getInstance().authServerPort);
     }
 
     private void handleOauthCode(Context ctx){
@@ -29,8 +30,7 @@ public class AuthRestController {
             ctx.result("{\"success\":false, \"error\":"+e.getMessage()+"}");
             return;
         }
-        YoutubeCore.getInstance().setUserTokens(tr);
-        log.info("Auth is done successfully with youtube, proceeding with uploading the video...");
+        log.info("Auth is done successfully with youtube");
         ctx.status(200);
         ctx.result("{\"success\":true}");
     }

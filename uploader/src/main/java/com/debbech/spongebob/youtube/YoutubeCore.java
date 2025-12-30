@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,59 +19,56 @@ public class YoutubeCore {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static YoutubeCore instance = null;
-    private TokenResp userTokens = null;
-    private static boolean authDone = false;
 
     private YoutubeCore(){}
 
     public static YoutubeCore getInstance(){
         if(instance == null){
             instance = new YoutubeCore();
-            authDone = false;
         }
         return instance;
     }
 
-    public void upload() throws Exception{
+    public void upload(String videoName) throws Exception{
         //the necessary scope
         //https://www.googleapis.com/auth/youtube.upload
         log.info("uploading to yt...");
         try{
-            if(!isTokenValid()) throw new Exception("token has been expired.. please re-authenticate on dash service");
             UploadApi ua = new UploadApi();
-            YoutubeVideo yv = new YoutubeVideo("/home/ahmed/pngs/8.mp4", new File("/home/ahmed/pngs/8.mp4").length() );
-            ua.doUpload(yv, userTokens.access_token);
+            Path v = Paths.get(Config.getInstance().container_vids_dir).resolve(videoName);
+            YoutubeVideo yv = new YoutubeVideo(v.toString(), new File(v.toString()).length() );
+            ua.doUpload(yv);
         }catch(Exception e){
             log.error("could not upload to youtube because {}", e.getMessage());
             throw e;
         }
     }
 
-    private boolean isTokenValid(){
-        if(this.userTokens == null) return false;
-        if(this.userTokens.access_token.isEmpty()) return false;
-        if(((System.currentTimeMillis()/1000) - this.userTokens.issued) > this.userTokens.expires_in){
-            //todo add refresh token mechanism using this https://developers.google.com/oauthplayground/#step2&apisSelect=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube%2Chttps%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&url=https%3A%2F%2F&content_type=application%2Fjson&http_method=GET&useDefaultOauthCred=unchecked&oauthEndpointSelect=Google&oauthAuthEndpointValue=https%3A%2F%2Faccounts.google.com%2Fo%2Foauth2%2Fv2%2Fauth&oauthTokenEndpointValue=https%3A%2F%2Foauth2.googleapis.com%2Ftoken&includeCredentials=unchecked&accessTokenType=bearer&autoRefreshToken=unchecked&accessType=offline&prompt=consent&response_type=code&wrapLines=on
-            return false;
+    private GoogleSecret getGoogleSecret(){
+        String filePath = Config.getInstance().googleSecretFile;
+        try (FileReader reader = new FileReader(filePath)) {
+            Gson gson = new Gson();
+            GoogleSecret gs = gson.fromJson(reader, GoogleSecret.class);
+            return gs;
+        } catch (Exception e) {
+            log.error(("could not load google secret store : " + e.getMessage()));
         }
-        return true;
-    }
-
-
-    public void setUserTokens(TokenResp tr){
-        this.userTokens = tr;
-        this.userTokens.issued = System.currentTimeMillis()/1000;
+        return null;
     }
 
     public TokenResp getTokens(String code) throws Exception{
+
+        GoogleSecret gs = getGoogleSecret();
+        if(gs == null) throw new Exception("could not find google secrets file to authenticate user");
+
         String x = "https://oauth2.googleapis.com/token";
         URL url = new URL(x);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
         Map<String, String> parameters = new HashMap<>();
         parameters.put("code", code);
-        parameters.put("client_secret", Config.getInstance().getGoogleSecret().installed.client_secret);
-        parameters.put("client_id", Config.getInstance().getGoogleSecret().installed.client_id );
+        parameters.put("client_secret", gs.installed.client_secret);
+        parameters.put("client_id", gs.installed.client_id );
         parameters.put("redirect_uri", Config.getInstance().google_redirect_uri+"/oauth");
         parameters.put("grant_type", "authorization_code");
 
@@ -101,7 +101,13 @@ public class YoutubeCore {
         log.info("received access_token from token");
         Gson gson = new Gson();
         TokenResp tr = gson.fromJson(content.toString(), TokenResp.class);
+
+        createTokenFile(content.toString());
         return tr;
+    }
+
+    private void createTokenFile(String content) throws IOException {
+        Files.writeString(Path.of("request.token"), content);
     }
 
     private String paramString(Map<String, String> params){
@@ -117,4 +123,5 @@ public class YoutubeCore {
         String result = concatenatedString.toString().substring(0, concatenatedString.toString().length()-1);
         return result;
     }
+
 }

@@ -11,7 +11,7 @@ public class Core {
 
     private static Logger log = LoggerFactory.getLogger(Core.class);
 
-    public static void run(String[] args) throws Exception{
+    public static String run(String[] args) throws Exception{
         UserInput userInput = null;
         try {
             userInput = new InputSanitizer().sanitize(args);
@@ -22,7 +22,7 @@ public class Core {
             FFMPEGManager fm = new FFMPEGManager();
             fm.generateConcatinatedMp3();
             fm.generateMp4Video(userInput.getImage());
-            new DiskManager().moveMp4();
+            return new DiskManager().moveMp4();
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new Exception(e);

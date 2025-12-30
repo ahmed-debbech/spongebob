@@ -14,8 +14,6 @@ public class SpongeBob {
 
         log.info("Spongebob uploader started up & running...");
 
-        Config.getInstance().setGoogleConfig();
-
         new Thread(() -> {
             while(true) {
                 try {
@@ -27,8 +25,8 @@ public class SpongeBob {
             }
         }).start();
 
-        AuthRestController authRestController = new AuthRestController();
-        authRestController.startAuthRestServer();
+        AuthRestController arc = new AuthRestController();
+        arc.startAuthRestServer();
 
         Controller controller = new Controller();
         controller.listenForEvents();

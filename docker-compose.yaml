@@ -71,12 +71,12 @@ services:
     container_name: uploader
     networks:
       - spongebob-net
-    ports:
-      - 7070:7070
+    volumes:
+        - ./output:/app/vids #modify Config.java with path in container
     depends_on:
       rabbitmq:
         condition: service_healthy
-        
+
 networks:
   spongebob-net:
     driver: bridge

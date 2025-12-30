@@ -3,3 +3,4 @@ target
 upload_mock
 google.json
 upload_bin
+request.token

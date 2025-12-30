@@ -16,10 +16,10 @@ public class InputQueuesHandler {
         log.info("Handling event from {} ", Config.getInstance().in_proc_qu);
         try {
             log.info("message {}", message);
-            Core.run(new String[]{"X", Config.getInstance().container_mp3_path + "/" + ProcessRequestMessage.fromJson(message).playlistDirectoryName});
+            String finalFileName = Core.run(new String[]{"X", Config.getInstance().container_mp3_path + "/" + ProcessRequestMessage.fromJson(message).playlistDirectoryName});
 
             UploadRequestMessage urm = new UploadRequestMessage();
-            urm.video_name = "output.mp4";
+            urm.video_name = finalFileName;
             Gson g = new Gson();
             OutputQueues.publish_out_upl_yt(g.toJson(urm));
         }catch(Exception e){
