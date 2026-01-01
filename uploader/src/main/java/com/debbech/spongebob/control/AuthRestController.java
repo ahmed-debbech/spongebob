@@ -15,7 +15,13 @@ public class AuthRestController {
     public void startAuthRestServer(){
         Javalin.create()
                 .get("oauth", this::handleOauthCode)
+                .get("progress", this::handleProgress)
                 .start(Config.getInstance().authServerPort);
+    }
+
+    private void handleProgress(Context ctx){
+        ctx.status(200);
+        ctx.result("{\"progress\":\""+YoutubeCore.getInstance().progress+"\"}");
     }
 
     private void handleOauthCode(Context ctx){

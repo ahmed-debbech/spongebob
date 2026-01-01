@@ -17,6 +17,7 @@ import java.util.Map;
 public class YoutubeCore {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
+    public String progress = null;
 
     private static YoutubeCore instance = null;
 
