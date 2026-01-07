@@ -48,12 +48,14 @@ public class UploadApi {
                 YoutubeCore.getInstance().progress = null;
 
                 if (exitCode != 0) {
+                    log.error("video upload failed to be uploaded after binary finished with exit code 1");
                     throw new Exception("Video failed to be uploaded with exit code " + exitCode);
                 }
             } catch (Exception e) {
                 throw new Exception(e.getMessage());
             }
         }catch (Exception e){
+            YoutubeCore.getInstance().informDashService(false);
             throw e;
         }
     }

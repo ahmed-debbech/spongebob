@@ -29,14 +29,17 @@ public class AuthRestController {
         log.info("got 'code' from google's response");
         TokenResp tr = new TokenResp();
         try {
+            if(code == null) throw  new Exception();
             tr = YoutubeCore.getInstance().getTokens(code);
         } catch (Exception e) {
             log.error("could not retrieve access tokens from google after receiving the code {}", e.getMessage());
+            YoutubeCore.getInstance().informDashService(false);
             ctx.status(500);
             ctx.result("{\"success\":false, \"error\":"+e.getMessage()+"}");
             return;
         }
         log.info("Auth is done successfully with youtube");
+        YoutubeCore.getInstance().informDashService(true);
         ctx.status(200);
         ctx.result("{\"success\":true}");
     }

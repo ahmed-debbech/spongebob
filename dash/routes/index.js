@@ -4,6 +4,8 @@ const fs = require("fs")
 var config = require("../config")
 var axios = require("axios")
 
+var loginStatus = 0
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'SpongeBob', google_redirect_uri: encodeURI(config.google_redirect_uri) });
@@ -109,6 +111,36 @@ router.get('/getFile', (req, res) => {
     const stream = fs.createReadStream("./scdownloads/" + singleFile);
     stream.pipe(res);
   });
+
 });
+
+router.get('/loginStatus', (req, res) => {
+
+  let rest = loginStatus - (new Date().getTime() / 1000)
+  if(rest <= 0){
+    loginStatus=0
+    res.json({
+        "login_status":loginStatus 
+    })
+  }else{
+    res.json({
+      "login_status":rest 
+    })
+  }
+
+});
+
+router.put('/setLoginStatus/:s', (req, res) => {
+
+  let s = req.params["s"]
+  if(s == "-1"){
+    loginStatus = -1
+  }else{
+    loginStatus = s
+  }
+  res.send()
+
+});
+
 
 module.exports = router;

@@ -37,6 +37,37 @@
       width: 100%;
     }
 
+    .yt-btn {
+      transition: all 0.25s ease;
+      padding: 12px 18px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      color: #fff;
+      background: #ff8c32;
+    }
+
+    .yt-btn.state-normal {
+      background: #ff8c32;
+    }
+
+    .yt-btn.state-timer {
+      background: #a3936c;
+      color: #000;
+      cursor: not-allowed;
+    }
+
+    .yt-btn.state-error {
+      background: #ac2727;
+      color: #fff;
+    }
+
+    .yt-btn i {
+      margin-right: 6px;
+    }
+
+
     input[type=text] {
       padding: 12px;
       flex: 1;
@@ -192,13 +223,9 @@
       </div>
     </div>
 
-    <button id="downloadAll" style="width:100%;margin-top:6px">Download all</button>
-
-
-    <button onclick="downloadNow()" id="dn" class="hidden"
-      style="width:100%;margin-top:6px; background-color: green;">Download Now!</button>
-
-    <button onclick="window.open('https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&response_type=code&redirect_uri=<%=google_redirect_uri%>%2Foauth&client_id=454274022734-pq4m07rn6gf5dphsoq1dsif64sibrskd.apps.googleusercontent.com', '_blank')" id="ytBtn" class="btn" type="button" style="transition:all 0.25s ease; position:relative; overflow:hidden;">Select YouTube Channel</button>
+    <button id="ytBtn" class="btn" type="button"
+      style="transition:all 0.25s ease; position:relative; overflow:hidden;">Select
+      YouTube Channel</button>
 
 
   </div>
@@ -220,7 +247,7 @@
     socket.addEventListener('message', (ev) => {
       let data = ev.data;
       try {
-        if(holdLastContent == data) return;
+        if (holdLastContent == data) return;
         holdLastContent = data
         data = JSON.parse(data)
         playlistInput.value = data.playlistLink == undefined ? '' : data.playlistLink
@@ -317,6 +344,74 @@
     });
 
   </script>
+
+  <script>
+    const ytBtn = document.getElementById("ytBtn");
+    let timerInterval = null;
+
+    function setYTNormal() {
+      clearInterval(timerInterval);
+      ytBtn.className = "yt-btn state-normal";
+      ytBtn.innerHTML = "Select YouTube Channel";
+      ytBtn.disabled = false;
+    }
+
+    function setYTTimer(seconds) {
+      console.log(seconds)
+      ytBtn.className = "yt-btn state-timer";
+      ytBtn.disabled = true;
+
+      let remaining = seconds;
+      ytBtn.innerHTML = `Channel selected relogin in ${remaining}s`;
+
+      timerInterval = setInterval(() => {
+        remaining--;
+        ytBtn.innerHTML = `Next relogin in ${remaining}s`;
+
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          setYTNormal();
+        }
+      }, 1000);
+    }
+
+    function setYTError() {
+      clearInterval(timerInterval);
+      ytBtn.className = "yt-btn state-error";
+      ytBtn.innerHTML = "⚠ error in youtube auth, re-login please";
+      ytBtn.disabled = false;
+    }
+
+    ytBtn.addEventListener("click", () => {
+      window.open(
+        "https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&response_type=code&redirect_uri=<%=google_redirect_uri%>%2Foauth&client_id=454274022734-pq4m07rn6gf5dphsoq1dsif64sibrskd.apps.googleusercontent.com",
+        "_blank"
+      );
+    });
+
+    $.ajax({
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function (data) {
+        console.log(data)
+        if(Number(data.login_status) == 0){
+          setYTNormal()
+        }
+        if(Number(data.login_status) == -1){
+          setYTError()
+        }
+        let timestamp = data.login_status
+        if(Number(timestamp) > 0){
+          setYTTimer(Math.floor(Number(timestamp)))
+        }
+      },
+      error: function (err) {},
+      processData: false,
+      type: 'GET',
+      url: '/loginStatus'
+    });
+  </script>
+
 </body>
 
 </html>

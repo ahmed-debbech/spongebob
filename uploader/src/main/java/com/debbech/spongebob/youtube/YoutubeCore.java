@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -125,4 +126,24 @@ public class YoutubeCore {
         return result;
     }
 
+    public void informDashService(boolean isSuccess){
+        URL url = null;
+        try {
+            if(!isSuccess)
+            url = new URL(Config.getInstance().dash_url + "/setLoginStatus/-1");
+            else
+                url = new URL(Config.getInstance().dash_url + "/setLoginStatus/"+(Config.getInstance().time_to_reauth + (System.currentTimeMillis() / 1000)));
+            System.err.println(url.toString());
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("PUT");
+            con.setDoOutput(true);
+            DataOutputStream out = new DataOutputStream(con.getOutputStream());
+            con.connect(); // sends the request
+            con.getResponseCode();
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            throw new RuntimeException("could not inform dash service about the login status because " + e.getMessage());
+        }
+    }
 }

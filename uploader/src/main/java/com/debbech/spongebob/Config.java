@@ -14,6 +14,8 @@ public class Config {
     public int processAttempts = 5;
     public String container_vids_dir = "/app/vids/";
     public String googleSecretFile = "google.json";
+    public String dash_url = "http://dash:3600";
+    public int time_to_reauth = 60; //secs
 
     private static Config config = null;
     private static Logger log = LoggerFactory.getLogger(Config.class);
