@@ -55,6 +55,7 @@ public class UploadApi {
                 throw new Exception(e.getMessage());
             }
         }catch (Exception e){
+            log.error("general error happened when wtrying to upload mp4 video to youtube");
             YoutubeCore.getInstance().informDashService(false);
             throw e;
         }
